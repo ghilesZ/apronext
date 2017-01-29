@@ -7,9 +7,11 @@
 # - _tags file introduces packages, bin_annot
 
 OCB_FLAGS = -use-ocamlfind -I src -I tests
-OCB = 		ocamlbuild $(OCB_FLAGS)
+OCB = ocamlbuild $(OCB_FLAGS)
 
-all: 		native byte lib # profile debug
+TESTS = $(shell find tests/ -name '*.ml')
+
+all: native byte lib # profile debug
 
 clean:
 			$(OCB) -clean
@@ -20,10 +22,10 @@ lib:
 			$(OCB) apronext.cmxs
 
 native:  	sanity
-			$(OCB) main.native
+			for i in $(TESTS:.ml=.native); do $(OCB) $$i; done
 
 byte: 		sanity
-			$(OCB) main.byte
+			for i in $(TESTS:.ml=.byte); do $(OCB) $$i; done
 
 profile: 	sanity
 			$(OCB) -tag profile main.native
@@ -35,6 +37,6 @@ sanity:
 			ocamlfind query apron
 
 test: 		native
-			echo '{"hello": "apron"}' | ./main.native
+			for i in $(wildcard *.native); do echo $$i; ./$$i; echo '**************'; done
 
 .PHONY: 	all clean byte native profile debug lib sanity test

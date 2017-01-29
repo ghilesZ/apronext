@@ -44,4 +44,6 @@ module Make(D:ADomain) = struct
   let filter_tcons = A.filter_tcons man
 
   let filter_lincons = A.filter_lincons man
+
+  let print fmt a = A.print fmt a
 end
