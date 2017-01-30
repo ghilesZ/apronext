@@ -36,7 +36,7 @@ debug: 		sanity
 sanity:
 			ocamlfind query apron
 
-test: 		native
+test: native
 			for i in $(wildcard *.native); do echo $$i; ./$$i; echo '**************'; done
 
 .PHONY: 	all clean byte native profile debug lib sanity test
