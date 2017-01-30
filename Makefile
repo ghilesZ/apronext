@@ -1,11 +1,3 @@
-#
-# Pure OCaml, package from Opam, two directories
-#
-
-# - The -I flag introduces sub-directories
-# - -use-ocamlfind is required to find packages (from Opam)
-# - _tags file introduces packages, bin_annot
-
 OCB_FLAGS = -use-ocamlfind -I src -I tests
 OCB = ocamlbuild $(OCB_FLAGS)
 
@@ -22,10 +14,10 @@ lib:
 			$(OCB) apronext.cmxs
 
 native:  	sanity
-			for i in $(TESTS:.ml=.native); do $(OCB) $$i; done
+			$(OCB) main.native
 
 byte: 		sanity
-			for i in $(TESTS:.ml=.byte); do $(OCB) $$i; done
+			$(OCB) main.byte
 
 profile: 	sanity
 			$(OCB) -tag profile main.native
@@ -37,6 +29,10 @@ sanity:
 			ocamlfind query apron
 
 test: native
-			for i in $(wildcard *.native); do echo $$i; ./$$i; echo '**************'; done
+			./main.native
+
+alltest: native
+			for i in $(TESTS:.ml=.native); do $(OCB) $$i; done
+			for i in $(wildcard *.native); do echo $$i; ./$$i; done
 
 .PHONY: 	all clean byte native profile debug lib sanity test

@@ -43,6 +43,7 @@ let neg (d:Generator1.t) : Generator1.t =
   Generator1.iter (fun c v -> Generator1.set_coeff d v (Coeff.neg c)) d;
   d
 
+(*returns a generator corresponding to a float point*)
 let of_float_point env coeffs =
   let l = Linexpr1.make env in
   let coeffs = List.mapi (fun i e ->
