@@ -1,4 +1,4 @@
-OCB_FLAGS = -use-ocamlfind -I src -I tests
+OCB_FLAGS = -use-ocamlfind -I src -I tests -pkg graphics
 OCB = ocamlbuild $(OCB_FLAGS)
 
 TESTS = $(shell find tests/ -name '*.ml')

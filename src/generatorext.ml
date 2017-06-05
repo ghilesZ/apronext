@@ -7,7 +7,7 @@ open Apron
 include Apron.Generator1
 include Array_maker.GeneratorExt
 
-(* Converts a Generator1 into an array of array of floats. *)
+(* Converts a Generator1 into a float array array. *)
 let to_float_array gens size =
   let scalar_to_float s =
     let res = match s with
@@ -20,7 +20,7 @@ let to_float_array gens size =
     | Coeff.Scalar x -> scalar_to_float x
     | Coeff.Interval i -> scalar_to_float i.Interval.inf
   in
-  (* Converts a Generator0 into an array of floats. *)
+  (* Converts a Generator0 into an float array. *)
   let to_float_array gen size =
     let tab = Array.make size 0. in
     let gen_lin = gen.Generator0.linexpr0 in

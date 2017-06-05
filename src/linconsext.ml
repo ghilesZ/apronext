@@ -9,6 +9,7 @@ include Array_maker.LinconsExt
 (**********************)
 (* Negation utilities *)
 (**********************)
+
 let neg_typ = function
   | EQ -> DISEQ
   | SUP -> SUPEQ
@@ -25,18 +26,22 @@ let neg d =
 
 (* split a = b into a >= b and a <= b*)
 let spliteq c =
-  let c1 = copy c in
-  set_typ c1 SUPEQ;
-  let c2 = copy c1 in
-  set_cst c2 (Apron.Coeff.neg (get_cst c2));
-  iter (fun c v -> set_coeff c2 v (Apron.Coeff.neg c)) c2;
-  c1,c2
+  if get_typ c = EQ then
+    let c1 = copy c in
+    set_typ c1 SUPEQ;
+    let c2 = copy c1 in
+    set_cst c2 (Apron.Coeff.neg (get_cst c2));
+    iter (fun c v -> set_coeff c2 v (Apron.Coeff.neg c)) c2;
+    c1,c2
+  else raise (Invalid_argument "spliteq must take an equality constraint")
 
 (* split a <> b into a > b or a < b*)
 let splitdiseq c =
-  let c1 = copy c in
-  set_typ c1 SUP;
-  let c2 = copy c1 in
-  set_cst c2 (Apron.Coeff.neg (get_cst c2));
-  iter (fun c v -> set_coeff c2 v (Apron.Coeff.neg c)) c2;
-  c1,c2
+  if get_typ c = DISEQ then
+    let c1 = copy c in
+    set_typ c1 SUP;
+    let c2 = copy c1 in
+    set_cst c2 (Apron.Coeff.neg (get_cst c2));
+    iter (fun c v -> set_coeff c2 v (Apron.Coeff.neg c)) c2;
+    c1,c2
+  else raise (Invalid_argument "splitdiseq must take a disequality constraint")
