@@ -1,6 +1,9 @@
-open Apron
+(** Octagons abstract domain *)
 
-include Domain.Make(struct
+module Domain = Domain.Make(struct
   type t = Oct.t
   let man = Oct.manager_alloc ()
 end)
+
+(** Instanciation of the Domain.Make functor *)
+include Domain

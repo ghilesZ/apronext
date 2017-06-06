@@ -1,13 +1,29 @@
-(******************************************************************************)
-(* This file is an extension for the Generator1 module from the apron Library *)
-(******************************************************************************)
+(*******************************************************************************)
+(** This file is an extension for the Generator1 module from the apron Library *)
+(*******************************************************************************)
 open Apron
 
-(* It only adds function, nothing is removed *)
+(** It only adds function, nothing is removed *)
 include Apron.Generator1
-include Array_maker.GeneratorExt
+include Array_maker.Make (struct
 
-(* Converts a Generator1 into a float array array. *)
+  open Generator1
+
+  type elem = t
+  type t = earray
+
+  let get = array_get
+
+  let set = array_set
+
+  let length = array_length
+
+  let make elem = array_make elem.env
+
+  let empty = array_make (Environment.make [||] [||]) 0
+end)
+
+(** Converts a Generator1 into a float array array. *)
 let to_float_array gens size =
   let scalar_to_float s =
     let res = match s with
@@ -37,13 +53,13 @@ let to_float_array gens size =
   done;
   tab
 
-(* constructs a new generator in opposite direction *)
+(** constructs a new generator in opposite direction *)
 let neg (d:Generator1.t) : Generator1.t =
   let d = Generator1.copy d in
   Generator1.iter (fun c v -> Generator1.set_coeff d v (Coeff.neg c)) d;
   d
 
-(*returns a generator corresponding to a float point*)
+(** returns a generator corresponding to a float point *)
 let of_float_point env coeffs =
   let l = Linexpr1.make env in
   let coeffs = List.mapi (fun i e ->

@@ -1,5 +1,5 @@
-OCB_FLAGS = -use-ocamlfind -I src -I tests -pkg graphics
-OCB = ocamlbuild $(OCB_FLAGS)
+OCB_FLAGS = -use-ocamlfind -I tests -pkg graphics
+OCB = ocamlbuild $(OCB_FLAGS) -I src
 
 TESTS = $(shell find tests/ -name '*.ml')
 
@@ -19,10 +19,13 @@ native:  	sanity
 byte: 		sanity
 			$(OCB) main.byte
 
+doc:
+			ocamlbuild -use-ocamlfind -pkg apron apronext.docdir/index.html
+
 profile: 	sanity
 			$(OCB) -tag profile main.native
 
-debug: 		sanity
+debug:
 			$(OCB) -tag debug main.byte
 
 sanity:

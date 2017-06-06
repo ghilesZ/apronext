@@ -1,10 +1,43 @@
-include Apron.Tcons1
-include Array_maker.TconsExt
+(** This file is an extension for the Tcons1 module from the apron
+Library *)
 
-(**********************)
-(* Negation utilities *)
-(**********************)
+(** Note : It only adds function, nothing is removed. Extensions are at
+the end of the module *)
 
+open Apron
+include Tcons1
+
+(** EArray higher order function utilities :
+   - array_fold
+   - array_iter
+   - array_for_all
+   - array_to_list
+   - array_of_list
+*)
+include (Array_maker.Make (struct
+  open Apron
+
+  open Tcons1
+
+  type elem = t
+  type t = earray
+
+  let get = array_get
+
+  let set = array_set
+
+  let length = array_length
+
+  let make elem = array_make elem.env
+
+  let empty = array_make (Environment.make [||] [||]) 0
+end))
+
+(***********************)
+(** Negation utilities *)
+(***********************)
+
+(** type of constraint negation; i.e : EQ -> DISEQ | SUP -> SUPEQ *)
 let neg_typ = function
   | EQ -> DISEQ
   | SUP -> SUPEQ
@@ -12,6 +45,12 @@ let neg_typ = function
   | DISEQ -> EQ
   | _ -> assert false
 
+(** constraints negation; e.g : a >= b -> a < b *)
+let neg d =
+  let d = copy d in set_typ d (get_typ d |> neg_typ);
+  d
+
+(** @deprecated : conversion to linear constraint *)
 let to_lincons env tc =
   let to_string (tc:t) : string =
     let s = Format.(
@@ -31,9 +70,6 @@ let to_lincons env tc =
   Apron.Lincons1.set_typ lin (Apron.Tcons1.get_typ tc);
   lin
 
-let neg d =
-  let d = copy d in set_typ d (get_typ d |> neg_typ);
-  d
 
 (* (\* split a = into a >= b and a <= b*\) *)
 (* let spliteq c = *)
