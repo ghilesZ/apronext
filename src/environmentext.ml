@@ -38,7 +38,7 @@ let add_real_s v = add_one (Apron.Var.of_string v,REAL)
 (** join two environments *)
 let join a b =
   let int_a,real_a = vars a and int_b,real_b = vars b in
-  let collect set acc = Array.fold_left (fun acc x -> x::acc) [] set in
+  let collect set acc = Array.fold_left (fun acc x -> x::acc) acc set in
   let ints  = [] |> collect int_a |> collect int_b
   and reals = [] |> collect real_a |> collect real_b in
   let ints  =
