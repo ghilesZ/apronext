@@ -101,7 +101,12 @@ Boxes, Octagons and Polyhedra.
           assign_texpr man acc var c None
         ) (top e) e
     in
-    let closed = join_array man (Array.of_list (List.map ofvertice g)) in
+    let closed =
+      lvertex
+      |> List.map ofvertice
+      |> Array.of_list
+      |> join_array man
+    in
     Generatorext.array_of_list lray |> add_ray_array man closed
 
   let of_generator_array (e : Environment.t) g =
