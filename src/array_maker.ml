@@ -6,9 +6,9 @@ module type ArrayLike = sig
   type elem
   type t
 
-  val get : t -> int -> elem
-  val set :  t -> int -> elem -> unit
-  val length : t -> int
+  val array_get : t -> int -> elem
+  val array_set :  t -> int -> elem -> unit
+  val array_length : t -> int
   val make : elem -> int -> t
   val empty : t
 
@@ -17,10 +17,10 @@ end
 module Make (A:ArrayLike) = struct
 
   let array_fold f a arr =
-    let size = A.length arr in
+    let size = A.array_length arr in
     let rec aux accu idx =
       if idx >= size then accu
-      else aux (f accu (A.get arr idx)) (idx+1)
+      else aux (f accu (A.array_get arr idx)) (idx+1)
     in aux a 0
 
   let array_iter f arr =
@@ -41,31 +41,25 @@ module Make (A:ArrayLike) = struct
   let array_to_list arr =
     let rec aux accu idx =
       if idx < 0 then accu
-      else aux ((A.get arr idx)::accu) (idx-1)
-    in aux [] (A.length arr - 1)
+      else aux ((A.array_get arr idx)::accu) (idx-1)
+    in aux [] (A.array_length arr - 1)
 
   let array_of_list = function
     | [] -> A.empty
     | h::_ as l ->
        let size = List.length l in
        let ear = A.make h size in
-       List.iteri (A.set ear) l;
+       List.iteri (A.array_set ear) l;
        ear
 end
 
 module LinconsExt = Make (struct
   open Apron
 
-  open Lincons1
+  include Lincons1
 
   type elem = t
   type t = earray
-
-  let get = array_get
-
-  let set = array_set
-
-  let length = array_length
 
   let make elem = array_make elem.env
 
@@ -75,16 +69,10 @@ end)
 module TconsExt = Make (struct
   open Apron
 
-  open Tcons1
+  include Tcons1
 
   type elem = t
   type t = earray
-
-  let get = array_get
-
-  let set = array_set
-
-  let length = array_length
 
   let make elem = array_make elem.env
 
@@ -94,16 +82,10 @@ end)
 module GeneratorExt = Make (struct
   open Apron
 
-  open Generator1
+  include Generator1
 
   type elem = t
   type t = earray
-
-  let get = array_get
-
-  let set = array_set
-
-  let length = array_length
 
   let make elem = array_make elem.env
 

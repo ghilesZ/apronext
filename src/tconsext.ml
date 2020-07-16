@@ -6,32 +6,7 @@ the end of the module *)
 
 open Apron
 include Tcons1
-
-(** EArray higher order function utilities :
-   - array_fold
-   - array_iter
-   - array_for_all
-   - array_to_list
-   - array_of_list
-*)
-include (Array_maker.Make (struct
-  open Apron
-
-  open Tcons1
-
-  type elem = t
-  type t = earray
-
-  let get = array_get
-
-  let set = array_set
-
-  let length = array_length
-
-  let make elem = array_make elem.env
-
-  let empty = array_make (Environment.make [||] [||]) 0
-end))
+include Array_maker.TconsExt
 
 (***********************)
 (** Negation utilities *)
