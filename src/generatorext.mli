@@ -112,7 +112,7 @@ open Generator1
   val neg :t-> t
 
   (** Converts a Generator1 into a float array array. *)
-  val to_float_array : earray -> int -> float array array
+  val to_float_array : earray -> float array array
 
   (** returns a generator corresponding to a float point *)
   val of_float_point : Environment.t -> float list -> t

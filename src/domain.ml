@@ -5,6 +5,7 @@
 (*****************************************************************************)
 
 open Apron
+open Apron_utils
 
 (** Abstract domain signature used by the following functor *)
 module type ADomain = sig
@@ -15,13 +16,12 @@ module type ADomain = sig
   val man: t Manager.t
 end
 
-(** functor that allows hiding the use of the manager,
- It also adds few utilities to the Abstract1 module *)
+(** functor that allows hiding the use of the manager, It also adds
+   few utilities to the Abstract1 module *)
 module Make(D:ADomain) = struct
   (** This functor implements all the constraint/generator based
-operations over abstract elements. These are generic and stand for
-Boxes, Octagons and Polyhedra.
-   *)
+     operations over abstract elements. These are generic and stand
+     for Boxes, Octagons and Polyhedra.  *)
 
   (** Conventions :
   - functions ending with _s allow to use/return string instead of variables
@@ -92,25 +92,20 @@ Boxes, Octagons and Polyhedra.
 
   let to_generator_list e = to_generator_array e |> G.array_to_list
 
-  let of_generator_list (e : Environment.t) (g : Generator1.t list) =
+  let of_generator_list (e : E.t) (g : Generator1.t list) =
     let open Generator1 in
-    let lvertex,lray = List.partition (fun g -> get_typ g = VERTEX) g in
+    let _,lray = List.partition (fun g -> get_typ g = VERTEX) g in
     let ofvertice v =
-      Environmentext.fold (fun acc var ->
+      E.fold (fun acc var ->
           let c = Texpr1.cst e (get_coeff v var) in
           assign_texpr man acc var c None
         ) (top e) e
     in
-    let closed =
-      lvertex
-      |> List.map ofvertice
-      |> Array.of_list
-      |> join_array man
-    in
+    let closed = join_array man (Array.of_list (List.map ofvertice g)) in
     Generatorext.array_of_list lray |> add_ray_array man closed
 
-  let of_generator_array (e : Environment.t) g =
-    of_generator_list e (Generatorext.array_to_list g)
+  let of_generator_array (e : E.t) g =
+    of_generator_list e (G.array_to_list g)
 
   let of_lincons_array = of_lincons_array man
 
@@ -121,6 +116,8 @@ Boxes, Octagons and Polyhedra.
   let of_tcons_list env l = of_tcons_array env (T.array_of_list l)
 
   (** Environment and variable related operations *)
+
+  let get_environment a = env a
 
   let change_environment a e = change_environment man a e false
 
@@ -151,32 +148,27 @@ Boxes, Octagons and Polyhedra.
   let bound_variable abs v = bound_variable man abs v
 
   let bound_variable_f abs v =
-    let scalar_to_float = function
-      | Scalar.Mpqf x -> Mpqf.to_float x
-      | Scalar.Float x -> x
-      | Scalar.Mpfrf x -> Mpfrf.to_float ~round:Mpfr.Near x
-    in
     let open Interval in
     let {inf;sup} = bound_variable abs v in
     (scalar_to_float inf),(scalar_to_float sup)
 
   let bound_variable_fs abs v = bound_variable_f abs (Var.of_string v)
 
-  let is_bounded abs v =
+  let is_bounded_variable abs v =
+    let open Interval in
+    let {inf;sup} = bound_variable abs v in
+    Scalar.is_infty inf <> 0 || Scalar.is_infty sup <> 0
+
+  let is_bounded_s abs v = is_bounded_variable abs (Var.of_string v)
+
+  let is_bounded abs =
+    let env = env abs in
     try
-      E.iter (fun v ->
-          let open Interval in
-          let {inf;sup} = bound_variable abs v in
-          if Scalar.is_infty inf <> 0 || Scalar.is_infty sup <> 0
-          then raise Exit
-        ) (env abs);
+      E.iter (fun v -> if is_bounded_variable abs v |> not then raise Exit) env;
       true
     with Exit -> false
 
-  let is_bounded_s abs v = is_bounded abs (Var.of_string v)
-
   (** Cross-domain conversion *)
-
   let to_box abs =
     let env = env abs in
     let abs' = A.change_environment man abs env false in
@@ -184,8 +176,7 @@ Boxes, Octagons and Polyhedra.
 
   let to_oct abs =
     let env = env abs in
-    let abs' = A.change_environment man abs env false in
-    to_tcons_array abs' |> A.of_tcons_array (Oct.manager_alloc ()) env
+    to_lincons_array abs |> A.of_lincons_array (Oct.manager_alloc ()) env
 
   let to_poly abs =
     let env = env abs in
@@ -193,7 +184,44 @@ Boxes, Octagons and Polyhedra.
     to_tcons_array abs' |> A.of_tcons_array (Polka.manager_alloc_strict ()) env
 
   (** Printing *)
+  let print fmt a =
+    (* print fmt a *)
+    let constraints = to_lincons_list a in
+    Format.fprintf fmt "{%a}"
+      (Format.pp_print_list ~pp_sep:(fun fmt () -> Format.fprintf fmt ";")
+         Linconsext.print) constraints
 
-  let print fmt a = print fmt a
+  (** Projection on 2 dimensions *)
+  let proj2D abs v1 v2 =
+    let env = env abs in
+    let new_env = Environmentext.empty in
+    let new_env =
+      if Array.exists ((=) v1) (Environmentext.get_ints env) then
+        Environmentext.add_int v1 new_env
+      else Environmentext.add_real v1 new_env
+    in
+    let new_env =
+      if Array.exists ((=) v2) (Environmentext.get_ints env) then
+        Environmentext.add_int v2 new_env
+      else Environmentext.add_real v2 new_env
+    in
+    change_environment abs new_env
+
+  (** returns the vertices of an abstract element projected on 2 dimensions *)
+  let to_vertices2D abs v1 v2 =
+    let gen' = to_generator_array abs in
+    let get_coord l = Apron.Linexpr1.(get_coeff l v1, get_coeff l v2) in
+    Array.init
+      (Generatorext.array_length gen')
+	    (fun i -> get_coord
+	                (Generatorext.(get_linexpr1 (array_get gen' i))))
+
+    |> Array.to_list
+    |> List.rev_map (fun(a,b)-> (coeff_to_float a, coeff_to_float b))
+
+
+  (** returns the vertices of an abstract element projected on 2 dimensions *)
+  let to_vertices2D_s abs v1 v2 =
+    to_vertices2D abs (Apron.Var.of_string v1) (Apron.Var.of_string v2)
 
 end

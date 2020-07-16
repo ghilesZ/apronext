@@ -36,27 +36,35 @@ let add_real v = add_one (v,REAL)
 let add_real_s v = add_one (Apron.Var.of_string v,REAL)
 
 (** join two environments *)
-let join a b =
+
+
+let join =
+  let module VarSet = struct
+      type t = Apron.Var.t
+      let compare = (Stdlib.compare: Apron.Var.t -> Apron.Var.t -> int)
+    end
+  in
+  let module VS = Set.Make(VarSet) in
+  fun a b ->
   let int_a,real_a = vars a and int_b,real_b = vars b in
-  let collect set acc = Array.fold_left (fun acc x -> x::acc) acc set in
-  let ints  = [] |> collect int_a |> collect int_b
-  and reals = [] |> collect real_a |> collect real_b in
   let ints  =
     List.fold_left
       (fun acc x -> (
-         if (not (mem_var acc x)) then add_int x acc
-         else acc
+         if (VS.mem x acc) then acc
+         else VS.add x acc
        )
-      ) empty ints
+      ) VS.empty ((Array.to_list int_a) @ (Array.to_list int_b))
   in
-  let intreals =
+  let reals =
     List.fold_left
       (fun acc x -> (
-         if (not (mem_var acc x)) then add_real x acc
-         else acc
+         if (VS.mem x acc) then acc
+         else VS.add x acc
        )
-      ) ints reals
-  in intreals
+      ) VS.empty ((Array.to_list real_a) @ (Array.to_list real_b))
+  in
+  let withreals = VS.fold add_real reals empty in
+  VS.fold add_int ints withreals
 
 (** Envrironment folding function *)
 let fold f a e =

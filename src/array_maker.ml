@@ -6,11 +6,11 @@ module type ArrayLike = sig
   type elem
   type t
 
-  val get    : t -> int -> elem
-  val set    : t -> int -> elem -> unit
+  val get : t -> int -> elem
+  val set :  t -> int -> elem -> unit
   val length : t -> int
-  val make   : elem -> int -> t
-  val empty  : t
+  val make : elem -> int -> t
+  val empty : t
 
 end
 
@@ -33,7 +33,10 @@ module Make (A:ArrayLike) = struct
     with Exit -> false
 
   let array_exists pred arr =
-    not (array_for_all (fun x -> not (pred x)) arr)
+    try
+      array_iter (fun a -> if pred a then raise Exit) arr;
+      true
+    with Exit -> false
 
   let array_to_list arr =
     let rec aux accu idx =
@@ -43,9 +46,66 @@ module Make (A:ArrayLike) = struct
 
   let array_of_list = function
     | [] -> A.empty
-    | h::tl as l ->
+    | h::_ as l ->
        let size = List.length l in
        let ear = A.make h size in
-       List.iteri (fun i b -> A.set ear i b) l;
+       List.iteri (A.set ear) l;
        ear
 end
+
+module LinconsExt = Make (struct
+  open Apron
+
+  open Lincons1
+
+  type elem = t
+  type t = earray
+
+  let get = array_get
+
+  let set = array_set
+
+  let length = array_length
+
+  let make elem = array_make elem.env
+
+  let empty = array_make (Environment.make [||] [||]) 0
+end)
+
+module TconsExt = Make (struct
+  open Apron
+
+  open Tcons1
+
+  type elem = t
+  type t = earray
+
+  let get = array_get
+
+  let set = array_set
+
+  let length = array_length
+
+  let make elem = array_make elem.env
+
+  let empty = array_make (Environment.make [||] [||]) 0
+end)
+
+module GeneratorExt = Make (struct
+  open Apron
+
+  open Generator1
+
+  type elem = t
+  type t = earray
+
+  let get = array_get
+
+  let set = array_set
+
+  let length = array_length
+
+  let make elem = array_make elem.env
+
+  let empty = array_make (Environment.make [||] [||]) 0
+end)
