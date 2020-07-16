@@ -23,7 +23,18 @@ let neg_typ = function
 (** constraints negation; e.g : a >= b -> a < b *)
 let neg d =
   let d = copy d in set_typ d (get_typ d |> neg_typ);
-  d
+                    d
+
+(* split a = into a > b or a < b*)
+let splitdiseq (c:t) : (t*t) =
+  let open Apron in
+  let c1 = copy c in
+  set_typ c1 SUP;
+  let texpr = get_texpr1 c in
+  let texpr' = Texpr1.unop Texpr0.Neg texpr Texpr0.Real  Texpr0.Near in
+  let c2 = Tcons1.make texpr' SUP in
+  c1,c2
+
 
 (** @deprecated : conversion to linear constraint *)
 let to_lincons env tc =

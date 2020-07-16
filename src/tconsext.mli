@@ -9,6 +9,13 @@ open Tcons1
 
 type t = Tcons1.t
 
+type typ = Lincons0.typ =
+|	EQ
+|	SUPEQ
+|	SUP
+|	DISEQ
+|	EQMOD of Scalar.t
+
 (** Make a tree expression constraint. Modifying later the linear expression ({e not
   advisable}) modifies correspondingly the tree expression constraint and conversely,
   except for changes of environements *)
@@ -100,6 +107,9 @@ val neg_typ : typ -> typ
 
 (** constraints negation; e.g : a >= b -> a < b *)
 val neg : t -> t
+
+(** split [a = b] into [(a > b),(a < b)] *)
+val splitdiseq : t -> t * t
 
 (** @deprecated  Conversion to linear constraint *)
 val to_lincons : Apron.Environment.t -> t -> Apron.Lincons1.t
