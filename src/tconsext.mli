@@ -93,7 +93,6 @@ open Tcons1
   (** {3 Extensions} *)
   (* ====================================================================== *)
 
-  (** Negation utilities *)
   (** type of constraint negation; i.e : EQ -> DISEQ | SUP -> SUPEQ *)
   val neg_typ : typ -> typ
 

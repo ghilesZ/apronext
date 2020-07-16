@@ -1,41 +1,16 @@
-OCB_FLAGS = -use-ocamlfind -I tests -pkg graphics
-OCB = ocamlbuild $(OCB_FLAGS) -I src
+build:
+	dune build
 
-TESTS = $(shell find tests/ -name '*.ml')
-
-all: native byte lib # profile debug
+test:
+	@dune runtest -f
 
 clean:
-			$(OCB) -clean
+	dune clean
 
-lib:
-			$(OCB) apronext.cma
-			$(OCB) apronext.cmxa
-			$(OCB) apronext.cmxs
+install:
+	dune install apronext
 
-native:  	sanity
-			$(OCB) main.native
+uninstall:
+	dune uninstall apronext
 
-byte: 		sanity
-			$(OCB) main.byte
-
-doc:
-			ocamlbuild -use-ocamlfind -pkg apron apronext.docdir/index.html
-
-profile: 	sanity
-			$(OCB) -tag profile main.native
-
-debug:
-			$(OCB) -tag debug main.byte
-
-sanity:
-			ocamlfind query apron
-
-test: native
-			./main.native
-
-alltest: native
-			for i in $(TESTS:.ml=.native); do $(OCB) $$i; done
-			for i in $(wildcard *.native); do echo $$i; ./$$i; done
-
-.PHONY: 	all clean byte native profile debug lib sanity test
+.PHONY: build test clean

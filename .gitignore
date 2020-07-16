@@ -2,3 +2,4 @@ _build/*
 *.cm[ioa]
 *.byte
 *.native
+*.merlin

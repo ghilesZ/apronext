@@ -135,4 +135,6 @@ open Generator1
   val array_to_list : earray ->t list
 
   (** of list build *)
-  val array_of_list :t list -> earray
+  val array_of_list : t list -> earray
+
+  val to_vertices2D : t -> string -> string -> float * float
