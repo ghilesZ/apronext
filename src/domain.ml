@@ -209,6 +209,10 @@ module Make(D:ADomain) = struct
     in
     change_environment abs new_env
 
+  (** Projection on 2 dimensions with string as variables *)
+  let proj2D_s abs v1 v2 =
+    proj2D abs (Apron.Var.of_string v1) (Apron.Var.of_string v2)
+
   (** returns the vertices of an abstract element projected on 2 dimensions *)
   let to_vertices2D abs v1 v2 =
     let gen' = to_generator_array abs in
@@ -220,7 +224,6 @@ module Make(D:ADomain) = struct
 
     |> Array.to_list
     |> List.rev_map (fun(a,b)-> (coeff_to_float a, coeff_to_float b))
-
 
   (** returns the vertices of an abstract element projected on 2 dimensions *)
   let to_vertices2D_s abs v1 v2 =
