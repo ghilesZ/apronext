@@ -2,7 +2,6 @@
 (* This file is an extension for the Generator1 module from the apron Library *)
 (******************************************************************************)
 open Apron
-open Apron_utils
 
 (* It only adds function, nothing is removed *)
 include Apron.Generator1
@@ -14,7 +13,7 @@ let to_float_array gen size =
   let gen_lin = gen.Generator0.linexpr0 in
   for i=0 to (size-1) do
     let coeff = Linexpr0.get_coeff gen_lin i in
-    tab.(i) <- coeff_to_float coeff
+    tab.(i) <- Coeffext.to_float coeff
   done;
   tab
 
@@ -48,4 +47,4 @@ let to_vertices2D (g:t) v1 v2 =
   let a_v1 = Apron.Var.of_string v1
   and a_v2 = Apron.Var.of_string v2 in
   let l = get_linexpr1 g in
-  Apron.Linexpr1.(coeff_to_float (get_coeff l a_v1), coeff_to_float (get_coeff l a_v2))
+  Apron.Linexpr1.(Coeffext.to_float (get_coeff l a_v1), Coeffext.to_float (get_coeff l a_v2))

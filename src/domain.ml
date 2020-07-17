@@ -5,7 +5,6 @@
 (*****************************************************************************)
 
 open Apron
-open Apron_utils
 
 (** Abstract domain signature used by the following functor *)
 module type ADomain = sig
@@ -150,9 +149,8 @@ module Make(D:ADomain) = struct
   let bound_variable abs v = bound_variable man abs v
 
   let bound_variable_f abs v =
-    let open Interval in
-    let {inf;sup} = bound_variable abs v in
-    (scalar_to_float inf),(scalar_to_float sup)
+    let open Intervalext in
+    bound_variable abs v |> to_float
 
   let bound_variable_fs abs v = bound_variable_f abs (Var.of_string v)
 
@@ -223,7 +221,7 @@ module Make(D:ADomain) = struct
 	                (Generatorext.(get_linexpr1 (array_get gen' i))))
 
     |> Array.to_list
-    |> List.rev_map (fun(a,b)-> (coeff_to_float a, coeff_to_float b))
+    |> List.rev_map (fun(a,b)-> (Coeffext.to_float a, Coeffext.to_float b))
 
   (** returns the vertices of an abstract element projected on 2 dimensions *)
   let to_vertices2D_s abs v1 v2 =
