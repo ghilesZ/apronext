@@ -115,6 +115,8 @@ module Make(D:ADomain) = struct
 
   let of_tcons_list env l = of_tcons_array env (T.array_of_list l)
 
+  let of_box = of_box man
+
   (** Environment and variable related operations *)
 
   let get_environment a = env a
