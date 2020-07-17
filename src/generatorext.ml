@@ -43,8 +43,17 @@ let of_float_point env coeffs =
   Linexpr1.set_list l coeffs None;
   make l VERTEX
 
-let to_vertices2D (g:t) v1 v2 =
-  let a_v1 = Apron.Var.of_string v1
-  and a_v2 = Apron.Var.of_string v2 in
+let to_vertices2D (g:t) x y =
   let l = get_linexpr1 g in
-  Apron.Linexpr1.(Coeffext.to_float (get_coeff l a_v1), Coeffext.to_float (get_coeff l a_v2))
+  Linexpr1.(Coeffext.(to_float (get_coeff l x), to_float (get_coeff l y)))
+
+let to_vertices2D_s (g:t) x y =
+  to_vertices2D g (Apron.Var.of_string x) (Apron.Var.of_string y)
+
+let to_vertices3D (g:t) x y z =
+  let l = get_linexpr1 g in
+  Linexpr1.(Coeffext.(
+        to_float (get_coeff l x), to_float (get_coeff l y), to_float (get_coeff l z)))
+
+let to_vertices3D_s (g:t) x y z =
+  to_vertices3D g (Apron.Var.of_string x) (Apron.Var.of_string y) (Apron.Var.of_string z)

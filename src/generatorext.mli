@@ -138,4 +138,7 @@ val array_to_list : earray ->t list
 (** of list build *)
 val array_of_list : t list -> earray
 
-val to_vertices2D : t -> string -> string -> float * float
+val to_vertices2D : t -> Var.t -> Var.t -> float * float
+val to_vertices2D_s : t -> string -> string -> float * float
+val to_vertices3D : t -> Var.t -> Var.t -> Var.t -> float * float * float
+val to_vertices3D_s : t -> string -> string -> string -> float * float * float

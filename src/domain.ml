@@ -207,9 +207,33 @@ module Make(D:ADomain) = struct
     in
     change_environment abs new_env
 
+  (** Projection on 3 dimensions *)
+  let proj3D abs v1 v2 v3 =
+    let env = env abs in
+    let new_env = Environmentext.empty in
+    let new_env =
+      if Array.exists ((=) v1) (Environmentext.get_ints env) then
+        Environmentext.add_int v1 new_env
+      else Environmentext.add_real v1 new_env
+    in
+    let new_env =
+      if Array.exists ((=) v2) (Environmentext.get_ints env) then
+        Environmentext.add_int v2 new_env
+      else Environmentext.add_real v2 new_env
+    in
+    let new_env =
+      if Array.exists ((=) v3) (Environmentext.get_ints env) then
+        Environmentext.add_int v3 new_env
+      else Environmentext.add_real v3 new_env
+    in change_environment abs new_env
+
   (** Projection on 2 dimensions with string as variables *)
   let proj2D_s abs v1 v2 =
     proj2D abs (Apron.Var.of_string v1) (Apron.Var.of_string v2)
+
+  (** Projection on 3 dimensions with string as variables *)
+  let proj3D_s abs v1 v2 v3 =
+    proj3D abs (Apron.Var.of_string v1) (Apron.Var.of_string v2) (Apron.Var.of_string v3)
 
   (** returns the vertices of an abstract element projected on 2 dimensions *)
   let to_vertices2D abs v1 v2 =
