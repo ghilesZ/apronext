@@ -7,25 +7,22 @@ open Apron
 include Apron.Generator1
 include Array_maker.GeneratorExt
 
-(* Converts a Generator0 into an array of floats. *)
-let to_float_array gen size =
-  let tab = Array.make size 0. in
-  let gen_lin = gen.Generator0.linexpr0 in
-  for i=0 to (size-1) do
-    let coeff = Linexpr0.get_coeff gen_lin i in
-    tab.(i) <- Coeffext.to_float coeff
-  done;
-  tab
+type float_point = float array
 
-(* Converts a Generator1 into an array of array of floats. *)
-let to_float_array gens =
+(* Converts a Generator0 into an array of floats. *)
+let to_float_array (gen:Generator0.t) size : float_point =
+  let gen_lin = gen.Generator0.linexpr0 in
+  Array.init size
+    (fun i ->
+      let coeff = Linexpr0.get_coeff gen_lin i in
+      Coeffext.to_float coeff)
+
+(* Converts a Generator1.earray into an array of float_points *)
+let to_float_array (gens:Generator1.earray) : float_point array=
   let size = Environmentext.size (array_get gens 0).env in
   let gen_tab = gens.Generator1.generator0_array in
-  let tab = Array.make (Array.length gen_tab) (Array.make size 0.) in
-  for i=0 to ((Array.length gen_tab)-1) do
-    tab.(i) <- to_float_array gen_tab.(i) size
-  done;
-  tab
+  Array.init (Array.length gen_tab) (fun i ->
+      to_float_array gen_tab.(i) size)
 
 (* constructs a new generator in opposite direction *)
 let neg (d:Generator1.t) : Generator1.t =

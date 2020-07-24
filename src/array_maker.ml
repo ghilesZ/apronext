@@ -26,6 +26,10 @@ module Make (A:ArrayLike) = struct
   let array_iter f arr =
     array_fold (fun _ a -> f a) () arr
 
+  let array_iteri f arr =
+    let i = ref 0 in
+    array_iter (f !i) arr
+
   let array_for_all pred arr =
     try
       array_iter (fun a -> if pred a |> not then raise Exit) arr;

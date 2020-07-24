@@ -129,7 +129,7 @@ module Make(D:ADomain) = struct
   let assign_linexpr abs var linexpr = assign_linexpr man abs var linexpr None
 
   let assign_f abs var f =
-    let texpr = Texprext.cst_f E.empty f in
+    let texpr = Texprext.cst_f f |> Texprext.of_expr abs.env in
     assign_texpr abs var texpr
 
   let assign_fs abs var f = assign_f abs (Var.of_string var) f
