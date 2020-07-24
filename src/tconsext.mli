@@ -36,7 +36,6 @@ val get_typ: t -> typ
 (** Set the constraint type *)
 val set_typ: t -> typ -> unit
 
-
 (** Change the environement of the constraint for a super-environement. Raise [Failure] if it is not the case *)
 external extend_environment : t -> Environment.t -> t
   = "camlidl_tcons1_ap_tcons1_extend_environment"
@@ -102,6 +101,23 @@ external array_extend_environment_with : earray -> Environment.t -> unit
 (** {3 Extensions} *)
 (* ====================================================================== *)
 
+(** The following functions build the constraints corresponding to 'e1
+   op e2', where op is repectivelly (=,<>,>=,<=,>,<).  The type
+   underlying expression will be [Real] if left unspecified, and its
+   rounding mode will be [Near] if left unspecified *)
+val eq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Environment.t ->
+         Texpr1.expr -> Texpr1.expr -> t
+val diseq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Environment.t ->
+            Texpr1.expr -> Texpr1.expr -> t
+val geq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Environment.t ->
+          Texpr1.expr -> Texpr1.expr -> t
+val leq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Environment.t ->
+          Texpr1.expr -> Texpr1.expr -> t
+val gt : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Environment.t ->
+         Texpr1.expr -> Texpr1.expr -> t
+val lt : ?typ:Texpr1.typ -> ?round:Texpr1.round ->  Environment.t ->
+         Texpr1.expr -> Texpr1.expr -> t
+
 (** type of constraint negation; i.e : EQ -> DISEQ | SUP -> SUPEQ *)
 val neg_typ : typ -> typ
 
@@ -110,9 +126,6 @@ val neg : t -> t
 
 (** split [a = b] into [(a > b),(a < b)] *)
 val splitdiseq : t -> t * t
-
-(** @deprecated  Conversion to linear constraint *)
-val to_lincons : Apron.Environment.t -> t -> Apron.Lincons1.t
 
 (** Higher-order functions utilities *)
 

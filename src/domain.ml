@@ -96,7 +96,7 @@ module Make(D:ADomain) = struct
     let _,lray = List.partition (fun g -> get_typ g = VERTEX) g in
     let ofvertice v =
       E.fold (fun acc var ->
-          let c = Texpr1.cst e (get_coeff v var) in
+          let c = Texprext.cst e (get_coeff v var) in
           assign_texpr man acc var c None
         ) (top e) e
     in
@@ -129,7 +129,7 @@ module Make(D:ADomain) = struct
   let assign_linexpr abs var linexpr = assign_linexpr man abs var linexpr None
 
   let assign_f abs var f =
-    let texpr = Texpr1.(Cst (Coeff.s_of_float f) |> of_expr E.empty) in
+    let texpr = Texprext.cst_f E.empty f in
     assign_texpr abs var texpr
 
   let assign_fs abs var f = assign_f abs (Var.of_string var) f
