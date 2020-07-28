@@ -2,6 +2,9 @@ open Apron
 module S = Scalarext
 include Coeff
 
+let one = s_of_int 1
+let minus_one = s_of_int (-1)
+
 let to_float = function
   | Coeff.Scalar x -> S.to_float x
   | Coeff.Interval _ -> failwith "cant convert a coeff.interval to float"
