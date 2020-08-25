@@ -152,6 +152,8 @@ module Make(D:ADomain) = struct
     let open Intervalext in
     bound_variable abs v |> to_float
 
+  let bound_variable_s abs v = bound_variable abs (Var.of_string v)
+
   let bound_variable_fs abs v = bound_variable_f abs (Var.of_string v)
 
   let is_bounded_variable abs v =

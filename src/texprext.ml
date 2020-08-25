@@ -15,7 +15,7 @@ let cst_f f = Texpr1.Cst (Coeff.s_of_float f)
 let var_s s = Texpr1.Var (Var.of_string s)
 
 let unary ?typ:(t=Real) ?round:(r=Near) op e =
-  Unop (op, e, t, r)
+  unop op e t r
 
 let neg ?typ ?round =
   unary ?typ ?round Neg
@@ -27,7 +27,7 @@ let sqrt ?typ ?round =
   unary ?typ ?round Sqrt
 
 let binary ?typ:(t=Real) ?round:(r=Near) op e1 e2 =
-  Binop (op, e1, e2, t, r)
+  binop op e1 e2 t r
 
 let sub ?typ ?round =
   binary ?typ ?round Sub

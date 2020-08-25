@@ -132,18 +132,17 @@ val print : Format.formatter -> t -> unit
 (* ====================================================================== *)
 
 val cst_f : float -> expr
-
 val var_s : string -> expr
 
-val unary : ?typ:typ -> ?round:round -> unop -> expr -> expr
-val neg : ?typ:typ -> ?round:round -> expr -> expr
-val cast : ?typ:typ -> ?round:round -> expr -> expr
-val sqrt : ?typ:typ -> ?round:round -> expr -> expr
+val unary : ?typ:typ -> ?round:round -> unop -> t -> t
+val neg : ?typ:typ -> ?round:round -> t -> t
+val cast : ?typ:typ -> ?round:round -> t -> t
+val sqrt : ?typ:typ -> ?round:round -> t -> t
 
-val binary : ?typ:typ -> ?round:round -> binop -> expr -> expr -> expr
-val sub : ?typ:typ -> ?round:round -> expr -> expr -> expr
-val add : ?typ:typ -> ?round:round -> expr -> expr -> expr
-val mul : ?typ:typ -> ?round:round -> expr -> expr -> expr
-val div : ?typ:typ -> ?round:round -> expr -> expr -> expr
-val pow : ?typ:typ -> ?round:round -> expr -> expr -> expr
-val modulo : ?typ:typ -> ?round:round -> expr -> expr -> expr
+val binary : ?typ:typ -> ?round:round -> binop -> t -> t -> t
+val sub : ?typ:typ -> ?round:round -> t -> t -> t
+val add : ?typ:typ -> ?round:round -> t -> t -> t
+val mul : ?typ:typ -> ?round:round -> t -> t -> t
+val div : ?typ:typ -> ?round:round -> t -> t -> t
+val pow : ?typ:typ -> ?round:round -> t -> t -> t
+val modulo : ?typ:typ -> ?round:round -> t -> t -> t

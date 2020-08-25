@@ -105,18 +105,12 @@ external array_extend_environment_with : earray -> Environment.t -> unit
    op e2', where op is repectivelly (=,<>,>=,<=,>,<).  The type
    underlying expression will be [Real] if left unspecified, and its
    rounding mode will be [Near] if left unspecified *)
-val eq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Environment.t ->
-         Texpr1.expr -> Texpr1.expr -> t
-val diseq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Environment.t ->
-            Texpr1.expr -> Texpr1.expr -> t
-val geq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Environment.t ->
-          Texpr1.expr -> Texpr1.expr -> t
-val leq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Environment.t ->
-          Texpr1.expr -> Texpr1.expr -> t
-val gt : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Environment.t ->
-         Texpr1.expr -> Texpr1.expr -> t
-val lt : ?typ:Texpr1.typ -> ?round:Texpr1.round ->  Environment.t ->
-         Texpr1.expr -> Texpr1.expr -> t
+val eq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Texpr1.t -> Texpr1.t -> t
+val diseq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Texpr1.t -> Texpr1.t -> t
+val geq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Texpr1.t -> Texpr1.t -> t
+val leq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Texpr1.t -> Texpr1.t -> t
+val gt : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Texpr1.t -> Texpr1.t -> t
+val lt : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Texpr1.t -> Texpr1.t -> t
 
 (** type of constraint negation; i.e : EQ -> DISEQ | SUP -> SUPEQ *)
 val neg_typ : typ -> typ

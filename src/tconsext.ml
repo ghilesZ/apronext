@@ -12,29 +12,29 @@ include Array_maker.TconsExt
 (* Useful constructors *)
 (***********************)
 
-let eq ?typ ?round env e1 e2 =
+let eq ?typ ?round e1 e2 =
   let expr = Texprext.sub ?typ ?round e1 e2 in
-  Tcons1.make (Texprext.of_expr env expr) Tcons1.EQ
+  Tcons1.make expr Tcons1.EQ
 
-let diseq ?typ ?round env e1 e2 =
+let diseq ?typ ?round e1 e2 =
   let expr = Texprext.sub ?typ ?round e1 e2 in
-  Tcons1.make (Texprext.of_expr env expr) Tcons1.DISEQ
+  Tcons1.make expr Tcons1.DISEQ
 
-let leq ?typ ?round env e1 e2 =
+let leq ?typ ?round e1 e2 =
   let expr = Texprext.sub ?typ ?round e2 e1 in
-  Tcons1.make (Texprext.of_expr env expr) Tcons1.SUPEQ
+  Tcons1.make expr Tcons1.SUPEQ
 
-let geq ?typ ?round env e1 e2 =
+let geq ?typ ?round e1 e2 =
   let expr = Texprext.sub ?typ ?round e1 e2 in
-  Tcons1.make (Texprext.of_expr env expr) Tcons1.SUPEQ
+  Tcons1.make expr Tcons1.SUPEQ
 
-let lt ?typ ?round env e1 e2 =
+let lt ?typ ?round e1 e2 =
   let expr = Texprext.sub ?typ ?round e2 e1 in
-  Tcons1.make (Texprext.of_expr env expr) Tcons1.SUP
+  Tcons1.make expr Tcons1.SUP
 
-let gt ?typ ?round env e1 e2 =
+let gt ?typ ?round e1 e2 =
   let expr = Texprext.sub ?typ ?round e1 e2 in
-  Tcons1.make (Texprext.of_expr env expr) Tcons1.SUP
+  Tcons1.make expr Tcons1.SUP
 
 (***********************)
 (** Negation utilities *)
