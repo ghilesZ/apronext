@@ -13,7 +13,7 @@ run-test: [
   ["dune" "runtest" "-p" name "-j" jobs]
 ]
 depends: [
-  "dune"  {>= 2.1}
+  "dune"  {>= "2.1"}
   "ocaml" {>= "4.08"}
   "apron"
 ]
