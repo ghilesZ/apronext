@@ -156,10 +156,7 @@ module Make(D:ADomain) = struct
 
   let bound_variable_fs abs v = bound_variable_f abs (Var.of_string v)
 
-  let is_bounded_variable abs v =
-    let open Interval in
-    let {inf;sup} = bound_variable abs v in
-    Scalar.is_infty inf <> 0 || Scalar.is_infty sup <> 0
+  let is_bounded_variable abs v = Intervalext.is_bounded (bound_variable abs v)
 
   let is_bounded_s abs v = is_bounded_variable abs (Var.of_string v)
 

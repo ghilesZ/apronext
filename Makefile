@@ -1,4 +1,4 @@
-default: build
+default: build doc
 
 build:
 	dune build

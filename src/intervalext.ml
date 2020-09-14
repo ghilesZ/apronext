@@ -26,3 +26,7 @@ let spawn ({inf;sup}:t) =
   let inf = S.to_mpqf inf and sup = S.to_mpqf sup in
   let r = Mpqf.of_float (Random.float 1.) in
   Mpqf.add inf (Mpqf.mul (Mpqf.sub sup inf) r)
+
+(** returns true if and only if both bounds are finite *)
+let is_bounded ({inf;sup}:t) =
+  Scalar.is_infty inf = 0 && Scalar.is_infty sup = 0
