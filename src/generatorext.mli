@@ -18,7 +18,7 @@ val make: Linexpr1.t -> Generator0.typ -> t
 val copy: t-> t
 
 (** Print the generator *)
-val print : Format.formatter ->t-> unit
+val print : Format.formatter -> t -> unit
 
 (** Get the generator type *)
 val get_typ:t-> Generator0.typ
