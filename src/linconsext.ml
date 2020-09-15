@@ -44,7 +44,3 @@ let splitdiseq c =
     iter (fun c v -> set_coeff c2 v (Apron.Coeff.neg c)) c2;
     c1,c2
   else raise (Invalid_argument "splitdiseq must take a disequality constraint")
-
-let print fmt l =
-  (* iter (fun c v -> Format.fprintf fmt "%f%s" (coeff_to_float c) (Var.to_string v)) l *)
-  Format.fprintf fmt "'%a'" print l
