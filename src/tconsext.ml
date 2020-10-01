@@ -43,13 +43,14 @@ let gt ?typ ?round e1 e2 =
 (** constraints negation; e.g : a >= b -> a < b *)
 let neg d =
   let neg_typ = function
-  | EQ -> DISEQ
-  | SUP -> SUPEQ
-  | SUPEQ -> SUP
-  | DISEQ -> EQ
-  | _ -> assert false
+    | EQ -> DISEQ
+    | SUP -> SUPEQ
+    | SUPEQ -> SUP
+    | DISEQ -> EQ
+    | _ -> assert false
   in
-  make (Texprext.neg (get_texpr1 d)) (get_typ d |> neg_typ)
+  let typ = get_typ d |> neg_typ in
+  make (Texprext.neg (get_texpr1 d)) typ
 
 (** split a = into a > b or a < b*)
 let splitdiseq (c:t) : (t*t) =
