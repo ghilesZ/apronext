@@ -112,9 +112,6 @@ val leq : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Texpr1.t -> Texpr1.t -> t
 val gt : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Texpr1.t -> Texpr1.t -> t
 val lt : ?typ:Texpr1.typ -> ?round:Texpr1.round -> Texpr1.t -> Texpr1.t -> t
 
-(** type of constraint negation; i.e : EQ -> DISEQ | SUP -> SUPEQ *)
-val neg_typ : typ -> typ
-
 (** constraints negation; e.g : a >= b -> a < b *)
 val neg : t -> t
 
