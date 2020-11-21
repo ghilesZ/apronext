@@ -72,7 +72,6 @@ val reduce : t -> t
 val print : Format.formatter -> t -> unit
 (** Printing *)
 
-
 (** {1 Extensions} *)
 
 (** the constant 1 *)
