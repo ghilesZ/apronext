@@ -131,7 +131,9 @@ val print : Format.formatter -> t -> unit
 (** {3 Extensions} *)
 (* ====================================================================== *)
 
+(** constructors *)
 val cst_f : float -> expr
+val cst_i : int -> expr
 val var_s : string -> expr
 
 val unary : ?typ:typ -> ?round:round -> unop -> t -> t

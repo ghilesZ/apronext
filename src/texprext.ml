@@ -12,6 +12,7 @@ include Texpr1
 (***********************)
 
 let cst_f f = Texpr1.Cst (Coeff.s_of_float f)
+let cst_i i = Texpr1.Cst (Coeff.s_of_int i)
 let var_s s = Texpr1.Var (Var.of_string s)
 
 let unary ?typ:(t=Real) ?round:(r=Near) op e =

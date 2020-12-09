@@ -1,3 +1,5 @@
+- add cst_i in texprext
+
 Release 1.0.2 
 - Fix 'Tconsext.neg' and remove Tconsext.neg_typ as its behaviour was unclear
 
