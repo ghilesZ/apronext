@@ -44,3 +44,27 @@ let splitdiseq c =
     iter (fun c v -> set_coeff c2 v (Apron.Coeff.neg c)) c2;
     c1,c2
   else raise (Invalid_argument "splitdiseq must take a disequality constraint")
+
+let print_typ fmt = function
+  | EQ -> Format.fprintf fmt "="
+  | SUP -> Format.fprintf fmt ">"
+  | SUPEQ -> Format.fprintf fmt ">="
+  | DISEQ -> Format.fprintf fmt "<>"
+  | EQMOD _ -> Format.fprintf fmt "eqmod"
+
+let pp_print fmt (c:t) =
+  let open Apron in
+  let left = ref[] in
+  let right = ref[] in
+  let is_neg c = Coeff.cmp c (Coeff.s_of_int 0) > 0 in
+  iter (fun c v ->
+      if is_neg c then right := (Coeff.neg c,v)::!right
+      else left := (c,v)::!right
+    ) c;
+  let plus_sep fmt () = Format.fprintf fmt "+" in
+  let positive fmt (c,v) = Format.fprintf fmt "%a%a" Coeff.print c Var.print v in
+  let print_list = Format.pp_print_list ~pp_sep:plus_sep positive in
+  match !left,!right with
+  | [],r -> Format.fprintf fmt "%a %a 0" print_list r print_typ (neg_typ (get_typ c))
+  | l,[] -> Format.fprintf fmt "%a %a 0" print_list l print_typ (get_typ c)
+  | l,r -> Format.fprintf fmt "%a %a %a" print_list l print_typ (get_typ c) print_list r

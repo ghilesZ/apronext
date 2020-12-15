@@ -36,10 +36,6 @@ let gt ?typ ?round e1 e2 =
   let expr = Texprext.sub ?typ ?round e1 e2 in
   Tcons1.make expr Tcons1.SUP
 
-(***********************)
-(** Negation utilities *)
-(***********************)
-
 (** constraints negation; e.g : a >= b -> a < b *)
 let neg d =
   let neg_typ = function

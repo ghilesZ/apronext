@@ -146,6 +146,9 @@ val spliteq : t -> t * t
  Raises Invalid_argument if the constraint is not a disequality *)
 val splitdiseq : t -> t * t
 
+(** Human readable pretty-printing *)
+val pp_print : Format.formatter -> t -> unit
+
 (** Higher-order functions utilities *)
 
 (** fold function over generator.earay *)
