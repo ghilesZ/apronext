@@ -183,12 +183,15 @@ module Make(D:ADomain) = struct
     to_tcons_array abs' |> A.of_tcons_array (Polka.manager_alloc_strict ()) env
 
   (** Printing *)
-  let print fmt a =
+  let print = A.print
+
+  (** Pretty printing *)
+  let pp_print fmt a =
     (* print fmt a *)
     let constraints = to_lincons_list a in
-    Format.fprintf fmt "{%a}"
-      (Format.pp_print_list ~pp_sep:(fun fmt () -> Format.fprintf fmt ";")
-         Linconsext.print) constraints
+    Format.fprintf fmt "[|%a|]"
+      (Format.pp_print_list ~pp_sep:(fun fmt () -> Format.fprintf fmt "; ")
+         Linconsext.pp_print) constraints
 
   (** Projection on 2 dimensions *)
   let proj2D abs v1 v2 =

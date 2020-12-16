@@ -11,7 +11,7 @@ let gens =
 let polyhedron = Apol.of_generator_list env gens
 
 let test_poly () =
-  Format.printf "%a\n" Apol.print polyhedron
+  Format.printf "%a\n%a\n" Apol.print polyhedron Apol.pp_print polyhedron
 
 
 let _ =

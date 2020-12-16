@@ -6,6 +6,7 @@
 include Apron.Lincons1
 include Array_maker.LinconsExt
 
+ module C = Apron.Coeff
 (**********************)
 (* Negation utilities *)
 (**********************)
@@ -18,8 +19,8 @@ let neg_typ = function
 
 let neg d =
   let d = copy d in
-  set_cst d (Apron.Coeff.neg (get_cst d));
-  iter (fun c v -> set_coeff d v (Apron.Coeff.neg c)) d;
+  set_cst d (C.neg (get_cst d));
+  iter (fun c v -> set_coeff d v (C.neg c)) d;
   set_typ d (get_typ d |> neg_typ);
   d
 
@@ -29,8 +30,8 @@ let spliteq c =
     let c1 = copy c in
     set_typ c1 SUPEQ;
     let c2 = copy c1 in
-    set_cst c2 (Apron.Coeff.neg (get_cst c2));
-    iter (fun c v -> set_coeff c2 v (Apron.Coeff.neg c)) c2;
+    set_cst c2 (C.neg (get_cst c2));
+    iter (fun c v -> set_coeff c2 v (C.neg c)) c2;
     c1,c2
   else raise (Invalid_argument "spliteq must take an equality constraint")
 
@@ -40,8 +41,8 @@ let splitdiseq c =
     let c1 = copy c in
     set_typ c1 SUP;
     let c2 = copy c1 in
-    set_cst c2 (Apron.Coeff.neg (get_cst c2));
-    iter (fun c v -> set_coeff c2 v (Apron.Coeff.neg c)) c2;
+    set_cst c2 (C.neg (get_cst c2));
+    iter (fun c v -> set_coeff c2 v (C.neg c)) c2;
     c1,c2
   else raise (Invalid_argument "splitdiseq must take a disequality constraint")
 
@@ -52,19 +53,38 @@ let print_typ fmt = function
   | DISEQ -> Format.fprintf fmt "<>"
   | EQMOD _ -> Format.fprintf fmt "eqmod"
 
-let pp_print fmt (c:t) =
+let pp_monom fmt (c,v) =
   let open Apron in
+  if c = Coeff.s_of_int 1 then Format.fprintf fmt "%a" Var.print v
+  else Format.fprintf fmt "%a%a" Coeff.print c Var.print v
+
+let plus_sep fmt () = Format.fprintf fmt "+"
+
+let print_list fmt l =
+  let l = List.filter (fun (c,_) -> C.cmp c (C.s_of_int 0) <> 0) l in
+  Format.pp_print_list ~pp_sep:plus_sep pp_monom fmt l
+
+let pp_print fmt (c:t) =
   let left = ref[] in
   let right = ref[] in
-  let is_neg c = Coeff.cmp c (Coeff.s_of_int 0) > 0 in
+  let is_neg c = C.cmp c (C.s_of_int 0) < 0 in
   iter (fun c v ->
-      if is_neg c then right := (Coeff.neg c,v)::!right
-      else left := (c,v)::!right
+      if is_neg c then right := (C.neg c,v)::!right
+      else left := (c,v)::!left
     ) c;
-  let plus_sep fmt () = Format.fprintf fmt "+" in
-  let positive fmt (c,v) = Format.fprintf fmt "%a%a" Coeff.print c Var.print v in
-  let print_list = Format.pp_print_list ~pp_sep:plus_sep positive in
-  match !left,!right with
-  | [],r -> Format.fprintf fmt "%a %a 0" print_list r print_typ (neg_typ (get_typ c))
-  | l,[] -> Format.fprintf fmt "%a %a 0" print_list l print_typ (get_typ c)
-  | l,r -> Format.fprintf fmt "%a %a %a" print_list l print_typ (get_typ c) print_list r
+  let l = List.rev !left in
+  let r = List.rev !right in
+  let cst = get_cst c in
+  let t = get_typ c in
+  match l,r with
+  | [],r -> Format.fprintf fmt "%a%a%a" print_list r print_typ (neg_typ t) C.print cst
+  | l,[] -> Format.fprintf fmt "%a%a%a" print_list l print_typ t C.print (C.neg cst)
+  | l,r ->
+     if  C.cmp cst (C.s_of_int 0) <> 0 then
+       let neg = C.neg cst in
+       Format.fprintf fmt "%a%a%a%s%a"
+         print_list l print_typ t print_list r
+         (if is_neg neg then "" else "+") C.print neg
+     else
+       Format.fprintf fmt "%a%a%a"
+         print_list l print_typ t print_list r
