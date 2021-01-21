@@ -31,6 +31,16 @@ let neg (d:Generator1.t) : Generator1.t =
   d
 
 (*returns a generator corresponding to a float point*)
+let of_rational_point env coeffs =
+  let l = Linexpr1.make env in
+  let coeffs = List.mapi (fun i e ->
+                   (Coeff.s_of_mpqf e), Environmentext.var_of_dim env i)
+                         coeffs
+  in
+  Linexpr1.set_list l coeffs None;
+  make l VERTEX
+
+(*returns a generator corresponding to a float point*)
 let of_float_point env coeffs =
   let l = Linexpr1.make env in
   let coeffs = List.mapi (fun i e ->

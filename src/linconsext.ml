@@ -6,10 +6,8 @@
 include Apron.Lincons1
 include Array_maker.LinconsExt
 
- module C = Apron.Coeff
-(**********************)
-(* Negation utilities *)
-(**********************)
+module C = Apron.Coeff
+
 let neg_typ = function
   | EQ -> DISEQ
   | SUP -> SUPEQ
