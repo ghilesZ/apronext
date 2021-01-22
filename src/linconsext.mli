@@ -151,6 +151,10 @@ val pp_print : Format.formatter -> t -> unit
 
 (** Higher-order functions utilities *)
 
+(** [fold f g l] folds over the different monom of the linear
+   expression [l], with as an initial accumulato the value [(g (get_cst l))]. *)
+val fold : (Coeff.t -> Var.t -> 'a -> 'a) -> (Coeff.t -> 'a) -> t -> 'a
+
 (** fold function over generator.earay *)
 val array_fold : ('a ->t-> 'a) -> 'a -> earray -> 'a
 

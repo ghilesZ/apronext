@@ -91,8 +91,9 @@ module Make(D:ADomain) = struct
 
   let to_generator_list e = to_generator_array e |> G.array_to_list
 
-  let of_generator_list (e : E.t) (g : Generator1.t list) =
+  let of_generator_list (g : Generator1.t list) =
     let open Generator1 in
+    let e = get_env (List.hd g) in
     let _,lray = List.partition (fun g -> get_typ g = VERTEX) g in
     let ofvertice v =
       E.fold (fun acc var ->
@@ -103,8 +104,8 @@ module Make(D:ADomain) = struct
     let closed = join_array man (Array.of_list (List.map ofvertice g)) in
     Generatorext.array_of_list lray |> add_ray_array man closed
 
-  let of_generator_array (e : E.t) g =
-    of_generator_list e (G.array_to_list g)
+  let of_generator_array g =
+    of_generator_list (G.array_to_list g)
 
   let of_lincons_array = of_lincons_array man
 

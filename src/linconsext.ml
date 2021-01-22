@@ -8,6 +8,11 @@ include Array_maker.LinconsExt
 
 module C = Apron.Coeff
 
+let fold f g l =
+  let acc = ref (g (get_cst l)) in
+  iter (fun c v -> acc := f c v !acc) l;
+  !acc
+
 let neg_typ = function
   | EQ -> DISEQ
   | SUP -> SUPEQ
