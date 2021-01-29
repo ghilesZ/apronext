@@ -8,6 +8,8 @@ include Array_maker.LinconsExt
 
 module C = Apron.Coeff
 
+let is_strict l = match get_typ l with SUP | DISEQ -> true | _ ->false
+
 let fold f g l =
   let acc = ref (g (get_cst l)) in
   iter (fun c v -> acc := f c v !acc) l;

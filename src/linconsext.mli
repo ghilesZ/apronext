@@ -131,6 +131,9 @@ external array_extend_environment_with : earray -> Environment.t -> unit
 (** {3 Extensions} *)
 (* ====================================================================== *)
 
+(** true if the type is 'SUP' or 'DISEQ' constraint *)
+val is_strict : t -> bool
+
 (** type of constraint negation *)
 val neg_typ : typ -> typ
 

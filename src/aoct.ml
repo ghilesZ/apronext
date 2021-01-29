@@ -16,7 +16,9 @@ let to_generator_list oct =
   to_generator_array oct
   |> G.array_to_list
 
-let of_generator_array (env : Environment.t) g =
+let of_generator_array g =
+  let g0 = Generatorext.array_get g 0 in
+  let env = Generator1.get_env g0 in
   let gen_to_oct (g:Generator1.t) : t =
     let oct = ref (top env) in
     Generatorext.iter (fun coeff var ->
@@ -29,8 +31,8 @@ let of_generator_array (env : Environment.t) g =
   let gens = G.array_to_list g |> List.rev_map gen_to_oct in
   List.fold_left join (bottom env) gens
 
-let of_generator_list (e : Environment.t) (g : Generator1.t list) =
-  G.array_of_list g |> of_generator_array e
+let of_generator_list (g : Generator1.t list) =
+  G.array_of_list g |> of_generator_array
 
 let to_vertices2D oct =
   let pol = to_poly oct in
