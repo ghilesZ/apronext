@@ -13,6 +13,10 @@ let polyhedron = Apol.of_generator_list gens
 let test_poly () =
   Format.printf "%a\n%a\n" Apol.print polyhedron Apol.pp_print polyhedron
 
+let test_lin () =
+  let lc = Apron.Parser.lincons1_of_string env "x + y - 3 >= 0" in
+  Format.printf "%a\n" Linconsext.pp_print lc
 
 let _ =
-  test_poly()
+  test_poly();
+  test_lin()

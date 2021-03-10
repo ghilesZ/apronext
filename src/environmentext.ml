@@ -14,11 +14,18 @@ let make_s ints reals =
 (** empty environment *)
 let empty = make [||] [||]
 
+exception DuplicateName of string
+
+let add_check e ints reals =
+  Array.iter (fun v -> if mem_var e v then raise (DuplicateName ((Apron.Var.to_string v)^": int"))) ints;
+  Array.iter (fun v -> if mem_var e v then raise (DuplicateName ((Apron.Var.to_string v)^": real"))) reals;
+  add e ints reals
+
 (** adds a variable to an environment according to its type *)
 let add_one (var,typ) e =
   match typ with
-  | INT -> add e [|var|] [||]
-  | REAL -> add e [||] [|var|]
+  | INT -> add_check e [|var|] [||]
+  | REAL -> add_check e [||] [|var|]
 
 (** same as add_one but with string instread of Var.t *)
 let add_one_s (var,typ) e = add_one ((Apron.Var.of_string var),typ) e
@@ -37,11 +44,10 @@ let add_real_s v = add_one (Apron.Var.of_string v,REAL)
 
 (** join two environments *)
 
-
 let join =
   let module VarSet = struct
       type t = Apron.Var.t
-      let compare = (Stdlib.compare: Apron.Var.t -> Apron.Var.t -> int)
+      let compare = Apron.Var.compare
     end
   in
   let module VS = Set.Make(VarSet) in
@@ -49,22 +55,13 @@ let join =
   let int_a,real_a = vars a and int_b,real_b = vars b in
   let ints  =
     List.fold_left
-      (fun acc x -> (
-         if (VS.mem x acc) then acc
-         else VS.add x acc
-       )
-      ) VS.empty ((Array.to_list int_a) @ (Array.to_list int_b))
+      (fun acc x -> VS.add x acc) VS.empty ((Array.to_list int_a) @ (Array.to_list int_b))
   in
   let reals =
     List.fold_left
-      (fun acc x -> (
-         if (VS.mem x acc) then acc
-         else VS.add x acc
-       )
-      ) VS.empty ((Array.to_list real_a) @ (Array.to_list real_b))
+      (fun acc x -> VS.add x acc) VS.empty ((Array.to_list real_a) @ (Array.to_list real_b))
   in
-  let withreals = VS.fold add_real reals empty in
-  VS.fold add_int ints withreals
+  empty |> VS.fold add_real reals |> VS.fold add_int ints
 
 (** Envrironment folding function *)
 let fold f a e =

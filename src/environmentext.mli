@@ -142,6 +142,14 @@ open Environment
   (** empty environment *)
   val empty : t
 
+  (** Exception to raise when adding a variable that alread exists in
+     the environment *)
+  exception DuplicateName of string
+
+  (** same as add but first check if the variables exist in the
+     environement and raises DuplicateName is it is the case.*)
+  val add_check : t -> Apron.Var.t array -> Apron.Var.t array -> t
+
   (** adds one variable to an environment according to its type *)
   val add_one : Apron.Var.t * typvar -> t -> t
 
