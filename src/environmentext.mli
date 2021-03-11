@@ -6,9 +6,10 @@ the end of the module *)
 
 
 open Apron
-open Environment
 
-  type t = Environment.t
+type t = Environment.t
+
+type typvar = Environment.typvar = INT | REAL
 
   (** Making an environment from a set of integer and real variables. Raise [Failure] in case of name conflict. *)
   external make : Var.t array -> Var.t array -> t

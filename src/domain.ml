@@ -197,37 +197,34 @@ module Make(D:ADomain) = struct
   (** Projection on 2 dimensions *)
   let proj2D abs v1 v2 =
     let env = env abs in
-    let new_env = Environmentext.empty in
-    let new_env =
-      if Array.exists ((=) v1) (Environmentext.get_ints env) then
-        Environmentext.add_int v1 new_env
-      else Environmentext.add_real v1 new_env
+    let add_var v res =
+      if E.typ_of_var env v = E.INT then E.add_int v res
+      else E.add_real v res
     in
     let new_env =
-      if Array.exists ((=) v2) (Environmentext.get_ints env) then
-        Environmentext.add_int v2 new_env
-      else Environmentext.add_real v2 new_env
+      if v1 = v2 then add_var v1 E.empty
+      else add_var v1 E.empty |> add_var v2
     in
     change_environment abs new_env
 
   (** Projection on 3 dimensions *)
   let proj3D abs v1 v2 v3 =
     let env = env abs in
-    let new_env = Environmentext.empty in
+    let new_env = E.empty in
     let new_env =
-      if Array.exists ((=) v1) (Environmentext.get_ints env) then
-        Environmentext.add_int v1 new_env
-      else Environmentext.add_real v1 new_env
+      if Array.exists ((=) v1) (E.get_ints env) then
+        E.add_int v1 new_env
+      else E.add_real v1 new_env
     in
     let new_env =
-      if Array.exists ((=) v2) (Environmentext.get_ints env) then
-        Environmentext.add_int v2 new_env
-      else Environmentext.add_real v2 new_env
+      if Array.exists ((=) v2) (E.get_ints env) then
+        E.add_int v2 new_env
+      else E.add_real v2 new_env
     in
     let new_env =
-      if Array.exists ((=) v3) (Environmentext.get_ints env) then
-        Environmentext.add_int v3 new_env
-      else Environmentext.add_real v3 new_env
+      if Array.exists ((=) v3) (E.get_ints env) then
+        E.add_int v3 new_env
+      else E.add_real v3 new_env
     in change_environment abs new_env
 
   (** Projection on 2 dimensions with string as variables *)
@@ -243,10 +240,8 @@ module Make(D:ADomain) = struct
     let gen' = to_generator_array abs in
     let get_coord l = Apron.Linexpr1.(get_coeff l v1, get_coeff l v2) in
     Array.init
-      (Generatorext.array_length gen')
-	    (fun i -> get_coord
-	                (Generatorext.(get_linexpr1 (array_get gen' i))))
-
+      (G.array_length gen')
+	    (fun i -> get_coord (G.(get_linexpr1 (array_get gen' i))))
     |> Array.to_list
     |> List.rev_map (fun(a,b)-> (Coeffext.to_float a, Coeffext.to_float b))
 
