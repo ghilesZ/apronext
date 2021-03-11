@@ -1,5 +1,4 @@
 open Apron
-
 include Scalar
 
 let to_mpqf = function
@@ -12,26 +11,26 @@ let to_float = function
   | Float x -> x
   | Mpfrf x -> Mpfrf.to_float ~round:Mpfr.Near x
 
-(** scalar addition. result is automatically lifted to mpqf to avoid
-   loss of precision *)
+(** scalar addition. result is automatically lifted to mpqf to avoid loss of
+    precision *)
 let add s1 s2 =
   let x1 = to_mpqf s1 and x2 = to_mpqf s2 in
   Mpqf (Mpqf.add x1 x2)
 
-(** scalar substraction. result is automatically lifted to mpqf to avoid
-   loss of precision *)
+(** scalar substraction. result is automatically lifted to mpqf to avoid loss of
+    precision *)
 let sub s1 s2 =
   let x1 = to_mpqf s1 and x2 = to_mpqf s2 in
   Mpqf (Mpqf.sub x1 x2)
 
-(** scalar multiplication. result is automatically lifted to mpqf to
-   avoid loss of precision *)
+(** scalar multiplication. result is automatically lifted to mpqf to avoid loss
+    of precision *)
 let mul s1 s2 =
   let x1 = to_mpqf s1 and x2 = to_mpqf s2 in
   Mpqf (Mpqf.mul x1 x2)
 
-(** scalar division. result is automatically lifted to mpqf to avoid
-   loss of precision *)
+(** scalar division. result is automatically lifted to mpqf to avoid loss of
+    precision *)
 let div s1 s2 =
   let x1 = to_mpqf s1 and x2 = to_mpqf s2 in
   Mpqf (Mpqf.div x1 x2)

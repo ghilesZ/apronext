@@ -1,8 +1,7 @@
-(** This file is an extension for the Tcons1 module from the Apron
-   library *)
+(** This file is an extension for the Tcons1 module from the Apron library *)
 
-(** Note : It only adds function, nothing is removed. Extensions are at
-the end of the module *)
+(** Note : It only adds function, nothing is removed. Extensions are at the end
+    of the module *)
 
 open Apron
 include Tcons1
@@ -49,11 +48,11 @@ let neg d =
   make (Texprext.neg (get_texpr1 d)) typ
 
 (** split a = into a > b or a < b*)
-let splitdiseq (c:t) : (t*t) =
+let splitdiseq (c : t) : t * t =
   let open Apron in
   let c1 = copy c in
-  set_typ c1 SUP;
+  set_typ c1 SUP ;
   let texpr = get_texpr1 c in
   let texpr' = Texpr1.unop Texpr0.Neg texpr Texpr0.Real Texpr0.Near in
   let c2 = Tcons1.make texpr' SUP in
-  c1,c2
+  (c1, c2)
