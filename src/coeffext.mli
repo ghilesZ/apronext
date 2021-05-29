@@ -80,6 +80,9 @@ val print : Format.formatter -> t -> unit
 
 (** {1 Extensions} *)
 
+val zero : t
+(** the constant 0 *)
+
 val one : t
 (** the constant 1 *)
 

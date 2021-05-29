@@ -2,6 +2,8 @@ open Apron
 module S = Scalarext
 include Coeff
 
+let zero = s_of_int 0
+
 let one = s_of_int 1
 
 let minus_one = s_of_int (-1)

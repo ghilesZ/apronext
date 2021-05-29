@@ -87,9 +87,10 @@ let pp_print fmt (c : t) =
   | l, [] ->
       Format.fprintf fmt "%a%a%a" print_list l print_typ t C.print (C.neg cst)
   | l, r ->
-      if C.cmp cst (C.s_of_int 0) <> 0 then
-        let neg = C.neg cst in
-        Format.fprintf fmt "%a%a%a%s%a" print_list l print_typ t print_list r
-          (if is_neg neg then "" else "+")
-          C.print neg
-      else Format.fprintf fmt "%a%a%a" print_list l print_typ t print_list r
+     if C.is_zero cst then
+       Format.fprintf fmt "%a%a%a" print_list l print_typ t print_list r
+     else
+       let neg = C.neg cst in
+       Format.fprintf fmt "%a%a%a%s%a" print_list l print_typ t print_list r
+         (if is_neg neg then "" else "+")
+         C.print neg

@@ -4,18 +4,50 @@ include Domain.Make (struct
   let man = Polka.manager_alloc_strict ()
 end)
 
-let set_diff a b =
+(** set difference *)
+let set_diff (p1:t) (p2:t) : t list =
   let work acc a c =
     let neg_c = Linconsext.neg c in
-    let a' = Abstractext.filter_lincons man a c
-    and s = Abstractext.filter_lincons man a neg_c in
+    let a' = filter_lincons a c
+    and s = filter_lincons a neg_c in
     if Abstractext.is_bottom man s then (a, acc) else (a', s :: acc)
   in
-  Linconsext.array_fold
-    (fun (_, acc) c ->
+  snd (Linconsext.array_fold
+    (fun (p1,acc) c ->
       if Linconsext.get_typ c = Apron.Lincons1.EQ then
         let c1, c2 = Linconsext.spliteq c in
-        let a', acc' = work acc a c1 in
+        let a', acc' = work acc p1 c1 in
         work acc' a' c2
-      else work acc a c )
-    (a, []) (A.to_lincons_array man b)
+      else work acc p1 c )
+    (p1, []) (A.to_lincons_array man p2))
+
+(** symbolic join with irredundant result (no overlapp)*)
+let join_irredundant (p1:t) (p2:t) : t list =
+  let m = meet p1 p2 in
+  if is_bottom m then [p1;p2]
+  else p1::(set_diff p1 p2)
+
+(** decomposes a polyhedron p into a list of simplices p1;p2 ... pn
+   s.t [(join p1 (join p2 (... (join pn-1 pn)))) = p] and all pi are
+   simplices ie, their number of generator is less or equal to the
+   number of dimensions + 1 *)
+let to_simplices =
+  let n_first l n =
+    let rec loop acc n = function
+      | [] -> invalid_arg "n_first: not enough elements in list"
+      | h :: tl -> if n > 0 then loop (h :: acc) (n - 1) tl else List.rev acc
+    in
+    loop [] n l
+  in
+  fun (pol:t) : t list ->
+  let env = get_environment pol in
+  let nb = Environmentext.size env + 1 in
+  let rec loop acc p =
+    let gens = to_generator_list p in
+    let nb_gen = List.length gens in
+    if nb_gen <= nb then (* simplex *) (p::acc)
+    else
+      let p' = of_generator_list (n_first gens nb) in
+      List.fold_left loop (p'::acc) (set_diff pol p')
+  in
+  loop [] pol
