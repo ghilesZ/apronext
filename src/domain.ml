@@ -80,7 +80,7 @@ module Make (D : ADomain) = struct
 
   let to_lincons_array : t -> Linconsext.earray = to_lincons_array man
 
-  let to_tcons_array : t -> Tconsext.earray= to_tcons_array man
+  let to_tcons_array : t -> Tconsext.earray = to_tcons_array man
 
   let to_generator_array : t -> Generatorext.earray = to_generator_array man
 
@@ -225,17 +225,17 @@ module Make (D : ADomain) = struct
 
   (** Projection on 2 dimensions with string as variables *)
   let proj2D_s (abs:t) v1 v2 =
-    proj2D abs (Apron.Var.of_string v1) (Apron.Var.of_string v2)
+    proj2D abs (Var.of_string v1) (Var.of_string v2)
 
   (** Projection on 3 dimensions with string as variables *)
   let proj3D_s (abs:t) v1 v2 v3 =
-    proj3D abs (Apron.Var.of_string v1) (Apron.Var.of_string v2)
-      (Apron.Var.of_string v3)
+    proj3D abs (Var.of_string v1) (Var.of_string v2)
+      (Var.of_string v3)
 
   (** returns the vertices of an abstract element projected on 2 dimensions *)
   let to_vertices2D (abs:t) v1 v2 =
     let gen' = to_generator_array abs in
-    let get_coord l = Apron.Linexpr1.(get_coeff l v1, get_coeff l v2) in
+    let get_coord l = Linexpr1.(get_coeff l v1, get_coeff l v2) in
     Array.init (G.array_length gen') (fun i ->
         get_coord G.(get_linexpr1 (array_get gen' i)) )
     |> Array.to_list
@@ -243,5 +243,5 @@ module Make (D : ADomain) = struct
 
   (** returns the vertices of an abstract element projected on 2 dimensions *)
   let to_vertices2D_s (abs:t) v1 v2 =
-    to_vertices2D abs (Apron.Var.of_string v1) (Apron.Var.of_string v2)
+    to_vertices2D abs (Var.of_string v1) (Var.of_string v2)
 end
