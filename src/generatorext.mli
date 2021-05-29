@@ -4,9 +4,9 @@
     of the documentation *)
 
 open Apron
-open Generator1
 
 type t = Generator1.t
+type earray = Generator1.earray
 
 val make : Linexpr1.t -> Generator0.typ -> t
 (** Make a generator. Modifying later the linear expression ({e not advisable})

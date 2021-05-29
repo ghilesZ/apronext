@@ -4,9 +4,9 @@
     of the module *)
 
 open Apron
-open Tcons1
 
 type t = Tcons1.t
+type earray = Tcons1.earray
 
 type typ = Lincons0.typ = EQ | SUPEQ | SUP | DISEQ | EQMOD of Scalar.t
 

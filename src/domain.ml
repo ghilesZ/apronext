@@ -78,11 +78,11 @@ module Make (D : ADomain) = struct
 
   (** of and to constraints/generator *)
 
-  let to_lincons_array : t -> Lincons1.earray = to_lincons_array man
+  let to_lincons_array : t -> Linconsext.earray = to_lincons_array man
 
-  let to_tcons_array : t -> Tcons1.earray= to_tcons_array man
+  let to_tcons_array : t -> Tconsext.earray= to_tcons_array man
 
-  let to_generator_array : t -> Generator1.earray = to_generator_array man
+  let to_generator_array : t -> Generatorext.earray = to_generator_array man
 
   let to_lincons_list (abs:t) = abs |> to_lincons_array |> L.array_to_list
 
@@ -114,7 +114,7 @@ module Make (D : ADomain) = struct
 
   let of_tcons_list env l = of_tcons_array env (T.array_of_list l)
 
-  let of_box : Environmentext.t -> Var.t array -> Interval.t array -> t = of_box man
+  let of_box : Environmentext.t -> Var.t array -> Intervalext.t array -> t = of_box man
 
   (** Environment and variable related operations *)
 

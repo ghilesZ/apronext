@@ -7,6 +7,7 @@ open Apron
 open Lincons1
 
 type t = Lincons1.t
+type earray = Lincons1.earray
 
 val make : Linexpr1.t -> typ -> t
 (** Make a linear constraint. Modifying later the linear expression
