@@ -27,9 +27,20 @@ let join_irredundant (p1 : t) (p2 : t) : t list =
   let m = meet p1 p2 in
   if is_bottom m then [p1; p2] else p1 :: set_diff p1 m
 
-(** decomposes a polyhedron p into a list of simplices p1;p2 ... pn s.t
-    [(join p1 (join p2 (... (join pn-1 pn)))) = p] and all pi are simplices ie,
-    their number of generator is less or equal to the number of dimensions + 1 *)
+(** weaker join operator in linear time *)
+let weak_join (p1 : t) (p2 : t) : t =
+  let l1 = to_lincons_array p1 in
+  let l2 = to_lincons_array p2 in
+  let sat =
+    L.array_fold (fun acc c -> if sat_lincons p2 c then c :: acc else acc) [] l1
+  in
+  L.array_fold (fun acc c -> if sat_lincons p1 c then c :: acc else acc) sat l2
+  |> of_lincons_list p1.env
+
+(** decomposes a polyhedron p into a list of simplices p{_ 1};p{_ 2} ... p{_ n}
+    s.t (join p{_ 1} (join p{_ 2} (... (join p{_ n-1} p{_ n})))) = p and all pi
+    are simplices ie, their number of generator is less or equal to the number
+    of dimensions + 1 *)
 let to_simplices =
   let n_first l n =
     let rec loop acc n = function
