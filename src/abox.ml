@@ -3,3 +3,5 @@ include Domain.Make (struct
 
   let man = Box.manager_alloc ()
 end)
+
+let diff (_b1 : t) (_b2 : t) : t = assert false

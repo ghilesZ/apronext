@@ -5,7 +5,7 @@ include Domain.Make (struct
 end)
 
 (** set difference *)
-let set_diff (p1 : t) (p2 : t) : t list =
+let diff (p1 : t) (p2 : t) : t list =
   let work acc a c =
     let neg_c = Linconsext.neg c in
     let a' = filter_lincons a c and s = filter_lincons a neg_c in
@@ -25,7 +25,7 @@ let set_diff (p1 : t) (p2 : t) : t list =
 (** symbolic join with irredundant result (no overlapp)*)
 let join_irredundant (p1 : t) (p2 : t) : t list =
   let m = meet p1 p2 in
-  if is_bottom m then [p1; p2] else p1 :: set_diff p1 m
+  if is_bottom m then [p1; p2] else p1 :: diff p1 m
 
 (** weaker join operator in linear time *)
 let weak_join (p1 : t) (p2 : t) : t =
@@ -58,6 +58,6 @@ let to_simplices =
       if nb_gen <= nb then (* simplex *) p :: acc
       else
         let p' = of_generator_list (n_first gens nb) in
-        List.fold_left loop (p' :: acc) (set_diff pol p')
+        List.fold_left loop (p' :: acc) (diff pol p')
     in
     loop [] pol
