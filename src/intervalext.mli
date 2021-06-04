@@ -87,8 +87,8 @@ val shrink_int : t -> t
     in [itv]*)
 
 val shrink_float : t -> t
-(** [shrink_int itv] computes the biggest interval with float bounds included in
-    [itv]*)
+(** [shrink_float itv] computes the biggest interval with float bounds included
+    in [itv]*)
 
 val to_float : t -> float * float
 

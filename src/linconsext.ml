@@ -5,7 +5,7 @@
 (* It only adds function, nothing is removed *)
 include Apron.Lincons1
 include Array_maker.LinconsExt
-module C = Apron.Coeff
+module C = Coeffext
 
 let is_strict l = match get_typ l with SUP | DISEQ -> true | _ -> false
 
@@ -59,8 +59,8 @@ let print_typ fmt = function
 
 let pp_monom fmt (c, v) =
   let open Apron in
-  if c = Coeff.s_of_int 1 then Format.fprintf fmt "%a" Var.print v
-  else Format.fprintf fmt "%a%a" Coeff.print c Var.print v
+  if c = C.one then Format.fprintf fmt "%a" Var.print v
+  else Format.fprintf fmt "%a%a" C.print c Var.print v
 
 let plus_sep fmt () = Format.fprintf fmt "+"
 
@@ -75,7 +75,7 @@ let pp_print fmt (c : t) =
   iter
     (fun c v ->
       if is_neg c then right := (C.neg c, v) :: !right
-      else left := (c, v) :: !left )
+      else left := (c, v) :: !left)
     c ;
   let l = List.rev !left in
   let r = List.rev !right in
@@ -87,10 +87,10 @@ let pp_print fmt (c : t) =
   | l, [] ->
       Format.fprintf fmt "%a%a%a" print_list l print_typ t C.print (C.neg cst)
   | l, r ->
-     if C.is_zero cst then
-       Format.fprintf fmt "%a%a%a" print_list l print_typ t print_list r
-     else
-       let neg = C.neg cst in
-       Format.fprintf fmt "%a%a%a%s%a" print_list l print_typ t print_list r
-         (if is_neg neg then "" else "+")
-         C.print neg
+      if C.is_zero cst then
+        Format.fprintf fmt "%a%a%a" print_list l print_typ t print_list r
+      else
+        let neg = C.neg cst in
+        Format.fprintf fmt "%a%a%a%s%a" print_list l print_typ t print_list r
+          (if is_neg neg then "" else "+")
+          C.print neg

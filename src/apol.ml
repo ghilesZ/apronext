@@ -9,7 +9,7 @@ let diff (p1 : t) (p2 : t) : t list =
   let work acc a c =
     let neg_c = Linconsext.neg c in
     let a' = filter_lincons a c and s = filter_lincons a neg_c in
-    if Abstractext.is_bottom man s then (a, acc) else (a', s :: acc)
+    if is_bottom s then (a, acc) else (a', s :: acc)
   in
   snd
     (Linconsext.array_fold
@@ -19,8 +19,7 @@ let diff (p1 : t) (p2 : t) : t list =
            let a', acc' = work acc p1 c1 in
            work acc' a' c2
          else work acc p1 c)
-       (p1, [])
-       (A.to_lincons_array man p2))
+       (p1, []) (to_lincons_array p2))
 
 (** symbolic join with irredundant result (no overlapp)*)
 let join_irredundant (p1 : t) (p2 : t) : t list =

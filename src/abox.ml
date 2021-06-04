@@ -4,4 +4,55 @@ include Domain.Make (struct
   let man = Box.manager_alloc ()
 end)
 
-let diff (_b1 : t) (_b2 : t) : t = assert false
+let rec product f b = function
+  | [] -> []
+  | hd :: tl -> List.rev_map (f hd) b |> List.rev_append (product f b tl)
+
+let iterator b =
+  let {box1_env; interval_array} = to_box1 b in
+  let i = ref 0 in
+  let len = Array.length interval_array in
+  fun () ->
+    if !i >= len then raise Exit
+    else
+      let v = E.var_of_dim box1_env !i in
+      let typ = E.typ_of_var box1_env v in
+      let itv = interval_array.(!i) in
+      incr i ; (v, typ, itv)
+
+let diff (b1 : t) (b2 : t) : t list =
+  if meet b1 b2 |> is_bottom then [b1]
+  else
+    let next = iterator b2 in
+    let rec aux a (acc : t list) =
+      match next () with
+      | v, t, i_b ->
+          let i_a = bound_variable a v in
+          let d =
+            I.diff i_a i_b
+            |> List.filter_map (fun i ->
+                   let i' =
+                     (if t = INT then I.shrink_int else I.shrink_float) i
+                   in
+                   if I.is_bottom i' then None else Some i')
+          in
+          let assign b i = assign_interval b v i in
+          aux (assign_interval a v i_b) (product assign d acc)
+      | exception Exit -> acc
+    in
+    aux b1 [b1]
+
+let pp_print fmt b =
+  let it = iterator b in
+  let rec loop acc =
+    match it () with
+    | v, _, i -> loop ((v, i) :: acc)
+    | exception Exit -> List.rev acc
+  in
+  let vars = loop [] in
+  Format.fprintf fmt "[|%a|]"
+    (Format.pp_print_list
+       ~pp_sep:(fun fmt () -> Format.fprintf fmt "; ")
+       (fun fmt (v, i) ->
+         Format.fprintf fmt "%a ∊ %a" Apron.Var.print v Intervalext.print i))
+    vars
