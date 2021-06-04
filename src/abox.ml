@@ -4,10 +4,10 @@ include Domain.Make (struct
   let man = Box.manager_alloc ()
 end)
 
-let rec product f b = function
-  | [] -> []
-  | hd :: tl -> List.rev_map (f hd) b |> List.rev_append (product f b tl)
+(** Build an iterator over triplets : variables, type, interval e.g:
+    [let it = iterator b in it (); it (); it()].
 
+    @raise Exit when all dimension have been iterated on. *)
 let iterator b =
   let {box1_env; interval_array} = to_box1 b in
   let i = ref 0 in
@@ -20,7 +20,12 @@ let iterator b =
       let itv = interval_array.(!i) in
       incr i ; (v, typ, itv)
 
+(** Difference operator for boxes *)
 let diff (b1 : t) (b2 : t) : t list =
+  let rec product f b = function
+    | [] -> []
+    | hd :: tl -> List.rev_map (f hd) b |> List.rev_append (product f b tl)
+  in
   if meet b1 b2 |> is_bottom then [b1]
   else
     let next = iterator b2 in
@@ -42,6 +47,7 @@ let diff (b1 : t) (b2 : t) : t list =
     in
     aux b1 [b1]
 
+(** more compact pretty printing *)
 let pp_print fmt b =
   let it = iterator b in
   let rec loop acc =
