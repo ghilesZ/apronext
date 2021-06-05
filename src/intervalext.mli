@@ -79,7 +79,10 @@ val join : t -> t -> t
 val meet : t -> t -> t
 (** meet of two intervals *)
 
-val diff : t -> t -> t list
+val diff_int : t -> t -> t list
+(** set difference of two intervals *)
+
+val diff_float : t -> t -> t list
 (** set difference of two intervals *)
 
 val shrink_int : t -> t

@@ -11,13 +11,36 @@ let meet a b : t =
   let sup = if S.cmp a.sup b.sup < 0 then a.sup else b.sup in
   if S.cmp inf sup < 0 then {inf; sup} else bottom
 
-let diff a b : t list =
+let diff_float a b : t list =
+  let pred_float s =
+    let f = S.to_float_down s in
+    let s' = S.of_float f in
+    if S.cmp s' s = 0 then S.of_float (Float.pred f) else s'
+  in
+  let next_float s =
+    let f = S.to_float_up s in
+    let s' = S.of_float f in
+    if S.cmp s' s = 0 then S.of_float (Float.succ f) else s'
+  in
   if meet a b |> is_bottom then [a]
   else
     match (S.cmp a.inf b.inf < 0, S.cmp b.sup a.sup < 0) with
-    | true, true -> [{inf= a.inf; sup= b.inf}; {inf= b.sup; sup= a.sup}]
-    | true, false -> [{inf= a.inf; sup= b.inf}]
-    | false, true -> [{inf= b.sup; sup= a.sup}]
+    | true, true ->
+        [ {inf= a.inf; sup= pred_float b.inf}
+        ; {inf= next_float b.sup; sup= a.sup} ]
+    | true, false -> [{inf= a.inf; sup= pred_float b.inf}]
+    | false, true -> [{inf= next_float b.sup; sup= a.sup}]
+    | false, false -> []
+
+let diff_int a b : t list =
+  if meet a b |> is_bottom then [a]
+  else
+    match (S.cmp a.inf b.inf < 0, S.cmp b.sup a.sup < 0) with
+    | true, true ->
+        [ {inf= a.inf; sup= S.sub b.inf S.one}
+        ; {inf= S.add b.sup S.one; sup= a.sup} ]
+    | true, false -> [{inf= a.inf; sup= S.sub b.inf S.one}]
+    | false, true -> [{inf= S.add b.sup S.one; sup= a.sup}]
     | false, false -> []
 
 let shrink_int {inf; sup} =

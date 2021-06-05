@@ -1,6 +1,6 @@
 open Apronext
 
-let env = Environmentext.make_s [||] [|"x"; "y"; "z"|]
+let env = Environmentext.make_s [|"x"; "z"|] [|"y"|]
 
 let g1 =
   [ Generatorext.of_float_point env [0.; 0.; 0.]

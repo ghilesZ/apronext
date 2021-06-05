@@ -3,6 +3,8 @@ include Scalar
 
 let z1 : Mpz.f Mpzf.tt = Mpz.of_int 1
 
+let one = of_int 1
+
 let ceil = function
   | Mpqf x ->
       let x, y = Mpqf.to_mpzf2 x in

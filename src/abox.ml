@@ -34,12 +34,7 @@ let diff (b1 : t) (b2 : t) : t list =
       | v, t, i_b ->
           let i_a = bound_variable a v in
           let d =
-            I.diff i_a i_b
-            |> List.filter_map (fun i ->
-                   let i' =
-                     (if t = INT then I.shrink_int else I.shrink_float) i
-                   in
-                   if I.is_bottom i' then None else Some i')
+            if t = INT then I.diff_int i_a i_b else I.diff_float i_a i_b
           in
           let assign b i = assign_interval b v i in
           aux (assign_interval a v i_b) (product assign d acc)
@@ -52,13 +47,19 @@ let pp_print fmt b =
   let it = iterator b in
   let rec loop acc =
     match it () with
-    | v, _, i -> loop ((v, i) :: acc)
+    | v, t, i -> loop ((v, t, i) :: acc)
     | exception Exit -> List.rev acc
   in
   let vars = loop [] in
+  let print_itv_int fmt i =
+    let zinf = Scalarext.to_mpqf i.I.inf |> Mpqf.to_mpzf2 |> fst
+    and zsup = Scalarext.to_mpqf i.I.sup |> Mpqf.to_mpzf2 |> fst in
+    Format.fprintf fmt "[%a; %a]" Mpz.print zinf Mpz.print zsup
+  in
+  let itv_print = function E.INT -> print_itv_int | E.REAL -> I.print in
   Format.fprintf fmt "[|%a|]"
     (Format.pp_print_list
        ~pp_sep:(fun fmt () -> Format.fprintf fmt "; ")
-       (fun fmt (v, i) ->
-         Format.fprintf fmt "%a ∊ %a" Apron.Var.print v Intervalext.print i))
+       (fun fmt (v, t, i) ->
+         Format.fprintf fmt "%a ∊ %a" Apron.Var.print v (itv_print t) i))
     vars
