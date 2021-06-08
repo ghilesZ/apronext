@@ -19,6 +19,6 @@ let b1 = Abox.of_generator_list g1
 let b2 = Abox.of_generator_list g2
 
 let () =
-  let diff = Abox.diff b1 b2 in
+  let diff = Abox.diff_float b1 b2 in
   Format.printf "@[%a@]@. - @[%a@]@.=\n" Abox.pp_print b1 Abox.pp_print b2 ;
   List.iter (Format.printf "%a@." Abox.pp_print) diff

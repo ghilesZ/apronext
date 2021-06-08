@@ -4,8 +4,8 @@ include Domain.Make (struct
   let man = Box.manager_alloc ()
 end)
 
-(** Build an iterator over triplets : variables, type, interval e.g:
-    [let it = iterator b in it (); it (); it()].
+(** given a box, builds an iterator over triplets : variables, type, interval
+    e.g: [let it = iterator b in it (); it (); it()].
 
     @raise Exit when all dimension have been iterated on. *)
 let iterator b =
@@ -20,8 +20,9 @@ let iterator b =
       let itv = interval_array.(!i) in
       incr i ; (v, typ, itv)
 
-(** Difference operator for boxes *)
-let diff (b1 : t) (b2 : t) : t list =
+(** Difference operator for boxes. WARNING, real variable have a floatting point
+    semantics, e.g [\[0.;1.\] - \[0.5; 1.\]= \[0.; 0.499999999\]] *)
+let diff_float (b1 : t) (b2 : t) : t list =
   let rec product f b = function
     | [] -> []
     | hd :: tl -> List.rev_map (f hd) b |> List.rev_append (product f b tl)
@@ -42,7 +43,7 @@ let diff (b1 : t) (b2 : t) : t list =
     in
     aux b1 [b1]
 
-(** more compact pretty printing *)
+(** compact pretty printing *)
 let pp_print fmt b =
   let it = iterator b in
   let rec loop acc =
