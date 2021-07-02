@@ -5,7 +5,7 @@
 (* It only adds function, nothing is removed *)
 include Apron.Lincons1
 include Array_maker.LinconsExt
-module C = Apron.Coeff
+module C = Coeffext
 
 let is_strict l = match get_typ l with SUP | DISEQ -> true | _ -> false
 
@@ -59,26 +59,26 @@ let print_typ fmt = function
 
 let pp_monom fmt (c, v) =
   let open Apron in
-  if c = Coeff.s_of_int 1 then Format.fprintf fmt "%a" Var.print v
-  else Format.fprintf fmt "%a%a" Coeff.print c Var.print v
+  if C.cmp C.one c = 0 then Format.fprintf fmt "%a" Var.print v
+  else Format.fprintf fmt "%a%a" C.print c Var.print v
 
 let plus_sep fmt () = Format.fprintf fmt "+"
 
 let print_list fmt l =
-  let l = List.filter (fun (c, _) -> C.cmp c (C.s_of_int 0) <> 0) l in
+  let l = List.filter (fun (c, _) -> C.cmp c C.zero <> 0) l in
   Format.pp_print_list ~pp_sep:plus_sep pp_monom fmt l
 
 let pp_print fmt (c : t) =
-  let left = ref [] in
-  let right = ref [] in
+  let l = ref [] in
+  let r = ref [] in
   let is_neg c = C.cmp c (C.s_of_int 0) < 0 in
   iter
     (fun c v ->
-      if is_neg c then right := (C.neg c, v) :: !right
-      else left := (c, v) :: !left )
+      if is_neg c then r := (C.neg c, v) :: !r
+      else l := (c, v) :: !l)
     c ;
-  let l = List.rev !left in
-  let r = List.rev !right in
+  let l = List.rev !l in
+  let r = List.rev !r in
   let cst = get_cst c in
   let t = get_typ c in
   match (l, r) with

@@ -6,6 +6,8 @@
 open Apron
 
 type t = Generator1.t
+
+type typ = Generator0.typ = LINE | RAY | VERTEX | LINEMOD | RAYMOD
 type earray = Generator1.earray
 
 val make : Linexpr1.t -> Generator0.typ -> t

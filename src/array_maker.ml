@@ -21,19 +21,20 @@ module Make (A : ArrayLike) = struct
   let array_fold f a arr =
     let size = A.array_length arr in
     let rec aux accu idx =
-      if idx >= size then accu else aux (f accu (A.array_get arr idx)) (idx + 1)
+      if idx >= size then accu
+      else aux (f accu (A.array_get arr idx)) (idx + 1)
     in
     aux a 0
 
-  let array_iter f arr = array_fold (fun _ a -> f a) () arr
+  let array_iter f = array_fold (fun _ a -> f a) ()
 
-  let array_iteri f arr =
+  let array_iteri f =
     let i = ref 0 in
-    array_iter (f !i) arr
+    array_iter (f !i)
 
-  let array_for_all pred arr =
+  let array_for_all pred a =
     try
-      array_iter (fun a -> if pred a |> not then raise Exit) arr ;
+      array_iter (fun x -> if pred x |> not then raise Exit) a ;
       true
     with Exit -> false
 

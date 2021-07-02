@@ -15,6 +15,6 @@ let test_poly () =
 
 let test_lin () =
   let lc = Apron.Parser.lincons1_of_string env "x + y - 3 >= 0" in
-  Format.printf "%a\n" Linconsext.pp_print lc
+  Format.printf "%a\n%a\n" Linconsext.print lc Linconsext.pp_print lc
 
 let _ = test_poly () ; test_lin ()
