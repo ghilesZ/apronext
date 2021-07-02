@@ -14,18 +14,18 @@ let to_float_array (gen : Generator0.t) size : float_point =
   let gen_lin = gen.Generator0.linexpr0 in
   Array.init size (fun i ->
       let coeff = Linexpr0.get_coeff gen_lin i in
-      Coeffext.to_float coeff )
+      Coeffext.to_float coeff)
 
 (* Converts a Generator1.earray into an array of float_points *)
-let to_float_array (gens : Generator1.earray) : float_point array =
+let to_float_array (gens : earray) : float_point array =
   let size = Environmentext.size (array_get gens 0).env in
-  let gen_tab = gens.Generator1.generator0_array in
-  Array.init (Array.length gen_tab) (fun i -> to_float_array gen_tab.(i) size)
+  let gen_tab = gens.generator0_array in
+  Array.map (fun e -> to_float_array e size) gen_tab
 
 (* constructs a new generator in opposite direction *)
-let neg (d : Generator1.t) : Generator1.t =
-  let d = Generator1.copy d in
-  Generator1.iter (fun c v -> Generator1.set_coeff d v (Coeff.neg c)) d ;
+let neg (d : t) : t =
+  let d = copy d in
+  iter (fun c v -> set_coeff d v (Coeff.neg c)) d ;
   d
 
 (*returns a generator corresponding to a float point*)
@@ -55,7 +55,7 @@ let to_vertices2D (g : t) x y =
   Linexpr1.(Coeffext.(to_float (get_coeff l x), to_float (get_coeff l y)))
 
 let to_vertices2D_s (g : t) x y =
-  to_vertices2D g (Apron.Var.of_string x) (Apron.Var.of_string y)
+  to_vertices2D g (Var.of_string x) (Var.of_string y)
 
 let to_vertices3D (g : t) x y z =
   let l = get_linexpr1 g in
@@ -66,5 +66,4 @@ let to_vertices3D (g : t) x y z =
       , to_float (get_coeff l z) ))
 
 let to_vertices3D_s (g : t) x y z =
-  to_vertices3D g (Apron.Var.of_string x) (Apron.Var.of_string y)
-    (Apron.Var.of_string z)
+  to_vertices3D g (Var.of_string x) (Var.of_string y) (Var.of_string z)

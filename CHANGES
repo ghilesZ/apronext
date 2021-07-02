@@ -1,0 +1,25 @@
+- new example for boxes
+- pp_print for boxes using unicode
+- add shrink functions in intervalext
+- add various conversions in scalarext
+- add simplex decomposition for poly
+- add irredundant join and weak join for poly
+- add diff operator for poly and boxes 
+
+Release 1.0.4
+- add Environmentext.add_check
+- fix bug proj2D when both variable are the same
+- add typvar in Environmentext
+
+Release 1.0.3
+- add of_rational_point in generatorext.ml
+- add cst_i in texprext
+
+Release 1.0.2 
+- fix 'Tconsext.neg' and remove Tconsext.neg_typ as its behaviour was unclear
+
+Release 1.0.1
+- fix 'is_bounded'
+
+Release 1.0 (2020-09-12):
+- first release

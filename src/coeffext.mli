@@ -89,6 +89,9 @@ val one : t
 val minus_one : t
 (** the constant -1 *)
 
+val of_interval : Interval.t -> t
+(** Interval coeff *)
+
 (** {2 conversion operators} *)
 
 val to_float : t -> float

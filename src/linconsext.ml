@@ -48,7 +48,8 @@ let splitdiseq c =
     set_cst c2 (C.neg (get_cst c2)) ;
     iter (fun c v -> set_coeff c2 v (C.neg c)) c2 ;
     (c1, c2) )
-  else raise (Invalid_argument "splitdiseq must take a disequality constraint")
+  else
+    raise (Invalid_argument "splitdiseq must take a disequality constraint")
 
 let print_typ fmt = function
   | EQ -> Format.fprintf fmt "="
@@ -59,7 +60,7 @@ let print_typ fmt = function
 
 let pp_monom fmt (c, v) =
   let open Apron in
-  if C.cmp C.one c = 0 then Format.fprintf fmt "%a" Var.print v
+  if c = C.one then Format.fprintf fmt "%a" Var.print v
   else Format.fprintf fmt "%a%a" C.print c Var.print v
 
 let plus_sep fmt () = Format.fprintf fmt "+"
@@ -74,8 +75,7 @@ let pp_print fmt (c : t) =
   let is_neg c = C.cmp c (C.s_of_int 0) < 0 in
   iter
     (fun c v ->
-      if is_neg c then r := (C.neg c, v) :: !r
-      else l := (c, v) :: !l)
+      if is_neg c then r := (C.neg c, v) :: !r else l := (c, v) :: !l)
     c ;
   let l = List.rev !l in
   let r = List.rev !r in
@@ -83,14 +83,16 @@ let pp_print fmt (c : t) =
   let t = get_typ c in
   match (l, r) with
   | [], r ->
-      Format.fprintf fmt "%a%a%a" print_list r print_typ (neg_typ t) C.print cst
+      Format.fprintf fmt "%a%a%a" print_list r print_typ (neg_typ t) C.print
+        cst
   | l, [] ->
-      Format.fprintf fmt "%a%a%a" print_list l print_typ t C.print (C.neg cst)
+      Format.fprintf fmt "%a%a%a" print_list l print_typ t C.print
+        (C.neg cst)
   | l, r ->
-     if C.is_zero cst then
-       Format.fprintf fmt "%a%a%a" print_list l print_typ t print_list r
-     else
-       let neg = C.neg cst in
-       Format.fprintf fmt "%a%a%a%s%a" print_list l print_typ t print_list r
-         (if is_neg neg then "" else "+")
-         C.print neg
+      if C.is_zero cst then
+        Format.fprintf fmt "%a%a%a" print_list l print_typ t print_list r
+      else
+        let neg = C.neg cst in
+        Format.fprintf fmt "%a%a%a%s%a" print_list l print_typ t print_list r
+          (if is_neg neg then "" else "+")
+          C.print neg

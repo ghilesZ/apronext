@@ -74,9 +74,24 @@ val print : Format.formatter -> t -> unit
 (** {1 Extensions} *)
 
 val join : t -> t -> t
-(** [join a b] computes the smallest interval [c] such that
-    [is_leq
-     a c && is_leq b c]*)
+(** join of two intervals *)
+
+val meet : t -> t -> t
+(** meet of two intervals *)
+
+val diff_int : t -> t -> t list
+(** set difference of two intervals *)
+
+val diff_float : t -> t -> t list
+(** set difference of two intervals *)
+
+val shrink_int : t -> t
+(** [shrink_int itv] computes the biggest interval with integer bounds included
+    in [itv]*)
+
+val shrink_float : t -> t
+(** [shrink_float itv] computes the biggest interval with float bounds included
+    in [itv]*)
 
 val to_float : t -> float * float
 
