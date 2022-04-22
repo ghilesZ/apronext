@@ -1,5 +1,6 @@
 (********************************************************************************)
-(** This file is an extension for the Environment module from the apron Library *)
+(** This file is an extension for the Environment module from the apron
+    Library *)
 (********************************************************************************)
 
 (** It only adds function, nothing is removed *)
@@ -19,8 +20,8 @@ exception DuplicateName of string
 let add_check e ints reals =
   Array.iter
     (fun v ->
-      if mem_var e v then raise (DuplicateName (Apron.Var.to_string v ^ ": int"))
-      )
+      if mem_var e v then
+        raise (DuplicateName (Apron.Var.to_string v ^ ": int")) )
     ints ;
   Array.iter
     (fun v ->
@@ -52,28 +53,45 @@ let add_real_s v = add_one (Apron.Var.of_string v, REAL)
 
 (** join two environments *)
 
-let join =
-  let module VarSet = struct
-    type t = Apron.Var.t
+module VarSet = struct
+  type t = Apron.Var.t
 
-    let compare = Apron.Var.compare
-  end in
-  let module VS = Set.Make (VarSet) in
-  fun a b ->
-    let int_a, real_a = vars a and int_b, real_b = vars b in
-    let ints =
-      List.fold_left
-        (fun acc x -> VS.add x acc)
-        VS.empty
-        (Array.to_list int_a @ Array.to_list int_b)
-    in
-    let reals =
-      List.fold_left
-        (fun acc x -> VS.add x acc)
-        VS.empty
-        (Array.to_list real_a @ Array.to_list real_b)
-    in
-    empty |> VS.fold add_real reals |> VS.fold add_int ints
+  let compare = Apron.Var.compare
+end
+
+module VS = Set.Make (VarSet)
+
+let join a b =
+  let int_a, real_a = vars a and int_b, real_b = vars b in
+  let ints =
+    List.fold_left
+      (fun acc x -> VS.add x acc)
+      VS.empty
+      (Array.to_list int_a @ Array.to_list int_b)
+  in
+  let reals =
+    List.fold_left
+      (fun acc x -> VS.add x acc)
+      VS.empty
+      (Array.to_list real_a @ Array.to_list real_b)
+  in
+  empty |> VS.fold add_real reals |> VS.fold add_int ints
+
+let meet a b =
+  let int_a, real_a = vars a and int_b, real_b = vars b in
+  let s_i_b = Array.to_list int_b |> VS.of_list in
+  let ints =
+    List.fold_left
+      (fun acc x -> if VS.mem x s_i_b then VS.add x acc else acc)
+      VS.empty (Array.to_list int_a)
+  in
+  let s_r_b = Array.to_list real_b |> VS.of_list in
+  let reals =
+    List.fold_left
+      (fun acc x -> if VS.mem x s_r_b then VS.add x acc else acc)
+      VS.empty (Array.to_list real_a)
+  in
+  empty |> VS.fold add_real reals |> VS.fold add_int ints
 
 (** Envrironment folding function *)
 let fold f a e =
