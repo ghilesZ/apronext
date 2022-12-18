@@ -57,6 +57,42 @@ let to_float a = (S.to_float a.inf, S.to_float a.sup)
 
 let to_mpqf a = (S.to_mpqf a.inf, S.to_mpqf a.sup)
 
+(* meet of a list of interval, avoids allocation of intermediary itv result.
+   Possible early termination *)
+let meet_l itvs =
+  match itvs with
+  | [] -> bottom
+  | [i] -> i
+  | hd :: tl -> (
+    try
+      let inf, sup =
+        List.fold_left
+          (fun (low, high) e ->
+            let ((i, s) as itv) =
+              ( (if S.cmp low e.inf < 0 then e.inf else low)
+              , if S.cmp high e.sup > 0 then e.sup else high )
+            in
+            if S.cmp i s > 0 then raise Exit else itv )
+          (hd.inf, hd.sup) tl
+      in
+      {inf; sup}
+    with Exit -> bottom )
+
+(* join of a list of interval, avoids allocation of intermediary itv result *)
+let join_l itvs =
+  match itvs with
+  | [] -> bottom
+  | [i] -> i
+  | hd :: tl ->
+      let inf, sup =
+        List.fold_left
+          (fun (low, high) e ->
+            ( (if S.cmp low e.inf < 0 then low else e.inf)
+            , if S.cmp high e.sup > 0 then high else e.sup ) )
+          (hd.inf, hd.sup) tl
+      in
+      {inf; sup}
+
 (** scalar range of an interval *)
 let range a = S.sub a.sup a.inf
 
