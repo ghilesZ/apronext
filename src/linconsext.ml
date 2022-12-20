@@ -48,13 +48,19 @@ let splitdiseq c =
     set_cst c2 (C.neg (get_cst c2)) ;
     iter (fun c v -> set_coeff c2 v (C.neg c)) c2 ;
     (c1, c2) )
-  else
-    raise (Invalid_argument "splitdiseq must take a disequality constraint")
+  else raise (Invalid_argument "splitdiseq must take a disequality constraint")
 
 let print_typ fmt = function
   | EQ -> Format.fprintf fmt "="
   | SUP -> Format.fprintf fmt ">"
   | SUPEQ -> Format.fprintf fmt ">="
+  | DISEQ -> Format.fprintf fmt "<>"
+  | EQMOD _ -> Format.fprintf fmt "eqmod"
+
+let print_sym fmt = function
+  | EQ -> Format.fprintf fmt "="
+  | SUP -> Format.fprintf fmt "<"
+  | SUPEQ -> Format.fprintf fmt "<="
   | DISEQ -> Format.fprintf fmt "<>"
   | EQMOD _ -> Format.fprintf fmt "eqmod"
 
@@ -65,26 +71,21 @@ let pp_monom fmt (c, v) =
 
 let plus_sep fmt () = Format.fprintf fmt "+"
 
-let print_list fmt l =
-  let l = List.filter (fun (c, _) -> C.cmp c C.zero <> 0) l in
-  Format.pp_print_list ~pp_sep:plus_sep pp_monom fmt l
+let print_list fmt l = Format.pp_print_list ~pp_sep:plus_sep pp_monom fmt l
 
 let pp_print fmt (c : t) =
   let l = ref [] in
   let r = ref [] in
-  let is_neg c = C.cmp c (C.s_of_int 0) < 0 in
+  let is_neg c = C.cmp c C.zero < 0 in
   iter
-    (fun c v ->
-      if is_neg c then r := (C.neg c, v) :: !r else l := (c, v) :: !l)
+    (fun c v -> if is_neg c then r := (C.neg c, v) :: !r else l := (c, v) :: !l)
     c ;
   let l = List.rev !l in
   let r = List.rev !r in
   let cst = get_cst c in
   let t = get_typ c in
   match (l, r) with
-  | [], r ->
-      Format.fprintf fmt "%a%a%a" print_list r print_typ t C.print
-        (if C.is_zero cst then cst else C.neg cst)
+  | [], r -> Format.fprintf fmt "%a%a%a" print_list r print_sym t C.print cst
   | l, [] ->
       Format.fprintf fmt "%a%a%a" print_list l print_typ t C.print
         (if C.is_zero cst then cst else C.neg cst)
