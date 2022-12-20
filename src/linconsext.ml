@@ -80,8 +80,8 @@ let pp_print fmt (c : t) =
   iter
     (fun c v -> if is_neg c then r := (C.neg c, v) :: !r else l := (c, v) :: !l)
     c ;
-  let l = List.rev !l in
-  let r = List.rev !r in
+  let l = List.rev (List.filter (fun (c, _) -> not (C.is_zero c)) !l) in
+  let r = List.rev (List.filter (fun (c, _) -> not (C.is_zero c)) !r) in
   let cst = get_cst c in
   let t = get_typ c in
   match (l, r) with
