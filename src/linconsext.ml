@@ -83,11 +83,11 @@ let pp_print fmt (c : t) =
   let t = get_typ c in
   match (l, r) with
   | [], r ->
-      Format.fprintf fmt "%a%a%a" print_list r print_typ (neg_typ t) C.print
-        cst
+      Format.fprintf fmt "%a%a%a" print_list r print_typ t C.print
+        (if C.is_zero cst then cst else C.neg cst)
   | l, [] ->
       Format.fprintf fmt "%a%a%a" print_list l print_typ t C.print
-        (C.neg cst)
+        (if C.is_zero cst then cst else C.neg cst)
   | l, r ->
       if C.is_zero cst then
         Format.fprintf fmt "%a%a%a" print_list l print_typ t print_list r
