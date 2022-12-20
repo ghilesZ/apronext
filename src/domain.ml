@@ -115,8 +115,7 @@ module Make (D : ADomain) = struct
   let of_tcons_array : Environmentext.t -> Tcons1.earray -> t =
     A.of_tcons_array D.man
 
-  let of_lincons_list l =
-    let env = L.get_env (List.hd l) in
+  let of_lincons_list env l =
     of_lincons_array env (L.array_of_list l)
 
   let of_tcons_list env l = of_tcons_array env (T.array_of_list l)

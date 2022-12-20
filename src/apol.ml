@@ -38,7 +38,7 @@ let weak_join (p1 : t) (p2 : t) : t =
   L.array_fold
     (fun acc c -> if sat_lincons p1 c then c :: acc else acc)
     sat l2
-  |> of_lincons_list
+  |> of_lincons_list p1.env
 
 (** decomposes a polyhedron p into a list of simplices p{_ 1};p{_ 2} ...
     p{_ n} s.t (join p{_ 1} (join p{_ 2} (... (join p{_ n-1} p{_ n})))) = p
