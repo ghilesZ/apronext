@@ -25,6 +25,7 @@ let test_lin () =
   before_after "x >= 0" ;
   before_after "x - y - 3 >= 0" ;
   before_after "x - y + 3 >= 0" ;
-  before_after "y + x + 3 >= 0"
+  before_after "y + x + 3 >= 0" ;
+  before_after "y + x - z - 3 >= 0"
 
 let _ = test_poly () ; test_lin ()

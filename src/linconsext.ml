@@ -76,12 +76,14 @@ let print_list fmt l = Format.pp_print_list ~pp_sep:plus_sep pp_monom fmt l
 let pp_print fmt (c : t) =
   let l = ref [] in
   let r = ref [] in
-  let is_neg c = C.cmp c C.zero < 0 in
   iter
-    (fun c v -> if is_neg c then r := (C.neg c, v) :: !r else l := (c, v) :: !l)
+    (fun c v ->
+      let s = C.sign c in
+      if s < 0 then r := (C.neg c, v) :: !r else if s > 0 then l := (c, v) :: !l
+      )
     c ;
-  let l = List.rev (List.filter (fun (c, _) -> not (C.is_zero c)) !l) in
-  let r = List.rev (List.filter (fun (c, _) -> not (C.is_zero c)) !r) in
+  let l = List.rev !l in
+  let r = List.rev !r in
   let cst = get_cst c in
   let t = get_typ c in
   match (l, r) with
@@ -90,10 +92,10 @@ let pp_print fmt (c : t) =
       Format.fprintf fmt "%a%a%a" print_list l print_typ t C.print
         (if C.is_zero cst then cst else C.neg cst)
   | l, r ->
-      if C.is_zero cst then
+      let s = C.sign cst in
+      if s = 0 then
         Format.fprintf fmt "%a%a%a" print_list l print_typ t print_list r
       else
-        let neg = C.neg cst in
         Format.fprintf fmt "%a%a%a%s%a" print_list l print_typ t print_list r
-          (if is_neg neg then "" else "+")
-          C.print neg
+          (if s > 0 then "" else "+")
+          C.print (C.neg cst)

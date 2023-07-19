@@ -1,6 +1,6 @@
-(** This file is an extension for the Abstract1 module from the apron
-    Library. It is not meant to be used as it is but through the instanciated
-    modules Abox, Apol and Aoct *)
+(** This file is an extension for the Abstract1 module from the apron Library.
+    It is not meant to be used as it is but through the instanciated modules
+    Abox, Apol and Aoct *)
 
 open Apron
 
@@ -16,14 +16,13 @@ end
 (** functor that hides the use of managers. It also adds few utilities to the
     Abstract1 module *)
 module Make (D : ADomain) = struct
-  (** This functor implements all the constraint/generator based operations
-      over abstract elements. These are generic and stand for Boxes, Octagons
-      and Polyhedra. *)
+  (** This functor implements all the constraint/generator based operations over
+      abstract elements. These are generic and stand for Boxes, Octagons and
+      Polyhedra. *)
 
   (** Conventions :
 
-      - functions ending with _s allow to use/return string instead of
-        variables
+      - functions ending with _s allow to use/return string instead of variables
       - functions ending with _f allow to use/return float instead of scalar
       - functions ending with _fs mix the two *)
 
@@ -36,8 +35,7 @@ module Make (D : ADomain) = struct
 
   type t = D.t A.t
 
-  type box1 = A.box1 =
-    {mutable interval_array: I.t array; mutable box1_env: E.t}
+  type box1 = A.box1 = {mutable interval_array: I.t array; mutable box1_env: E.t}
 
   (** Set-theoritic operations *)
 
@@ -83,28 +81,26 @@ module Make (D : ADomain) = struct
 
   let to_tcons_array : t -> Tconsext.earray = A.to_tcons_array D.man
 
-  let to_generator_array : t -> Generatorext.earray =
-    A.to_generator_array D.man
+  let to_generator_array : t -> Generatorext.earray = A.to_generator_array D.man
 
   let to_lincons_list (abs : t) = abs |> to_lincons_array |> L.array_to_list
 
   let to_tcons_list (abs : t) = abs |> to_tcons_array |> T.array_to_list
 
-  let to_generator_list (abs : t) =
-    abs |> to_generator_array |> G.array_to_list
+  let to_generator_list (abs : t) = abs |> to_generator_array |> G.array_to_list
 
   let of_generator_list (g : Generatorext.t list) : t =
     let open Generator1 in
     let e = get_env (List.hd g) in
-    let _, lray = List.partition (fun g -> get_typ g = VERTEX) g in
-    let ofvertice v =
+    let v, lray = List.partition (fun g -> get_typ g = VERTEX) g in
+    let of_vertice v =
       E.fold
         (fun acc var ->
           let c = Texprext.cst e (get_coeff v var) in
-          A.assign_texpr D.man acc var c None)
+          A.assign_texpr D.man acc var c None )
         (top e) e
     in
-    let closed = A.join_array D.man (Array.of_list (List.map ofvertice g)) in
+    let closed = A.join_array D.man (Array.of_list (List.map of_vertice v)) in
     Generatorext.array_of_list lray |> A.add_ray_array D.man closed
 
   let of_generator_array g : t = of_generator_list (G.array_to_list g)
@@ -115,8 +111,7 @@ module Make (D : ADomain) = struct
   let of_tcons_array : Environmentext.t -> Tcons1.earray -> t =
     A.of_tcons_array D.man
 
-  let of_lincons_list env l =
-    of_lincons_array env (L.array_of_list l)
+  let of_lincons_list env l = of_lincons_array env (L.array_of_list l)
 
   let of_tcons_list env l = of_tcons_array env (T.array_of_list l)
 
@@ -174,9 +169,7 @@ module Make (D : ADomain) = struct
   let is_bounded (abs : t) =
     let env = A.env abs in
     try
-      E.iter
-        (fun v -> if is_bounded_variable abs v |> not then raise Exit)
-        env ;
+      E.iter (fun v -> if is_bounded_variable abs v |> not then raise Exit) env ;
       true
     with Exit -> false
 
@@ -195,8 +188,7 @@ module Make (D : ADomain) = struct
   let to_poly (abs : t) =
     let env = A.env abs in
     let abs' = A.change_environment D.man abs env false in
-    to_tcons_array abs'
-    |> A.of_tcons_array (Polka.manager_alloc_strict ()) env
+    to_tcons_array abs' |> A.of_tcons_array (Polka.manager_alloc_strict ()) env
 
   (** Printing *)
   let print = A.print
@@ -208,19 +200,17 @@ module Make (D : ADomain) = struct
     Format.fprintf fmt "[|%a|]"
       (Format.pp_print_list
          ~pp_sep:(fun fmt () -> Format.fprintf fmt "; ")
-         Linconsext.pp_print)
+         Linconsext.pp_print )
       constraints
 
   (** Projection on 2 dimensions *)
   let proj2D (abs : t) v1 v2 : t =
     let env = A.env abs in
     let add_var v res =
-      if E.typ_of_var env v = E.INT then E.add_int v res
-      else E.add_real v res
+      if E.typ_of_var env v = E.INT then E.add_int v res else E.add_real v res
     in
     let new_env =
-      if v1 = v2 then add_var v1 E.empty
-      else add_var v1 E.empty |> add_var v2
+      if v1 = v2 then add_var v1 E.empty else add_var v1 E.empty |> add_var v2
     in
     change_environment abs new_env
 
@@ -255,10 +245,9 @@ module Make (D : ADomain) = struct
     let gen' = to_generator_array abs in
     let get_coord l = Linexpr1.(get_coeff l v1, get_coeff l v2) in
     Array.init (G.array_length gen') (fun i ->
-        get_coord G.(get_linexpr1 (array_get gen' i)))
+        get_coord G.(get_linexpr1 (array_get gen' i)) )
     |> Array.to_list
-    |> List.rev_map (fun (a, b) ->
-           (Coeffext.to_float a, Coeffext.to_float b))
+    |> List.rev_map (fun (a, b) -> (Coeffext.to_float a, Coeffext.to_float b))
 
   (** returns the vertices of an abstract element projected on 2 dimensions *)
   let to_vertices2D_s (abs : t) v1 v2 =

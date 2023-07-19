@@ -80,6 +80,10 @@ val print : Format.formatter -> t -> unit
 
 (** {1 Extensions} *)
 
+val sign : t -> int
+(** Returns -1, 0, or 1 when the argument is respectively negative, null, or
+    positive. *)
+
 val zero : t
 (** the constant 0 *)
 

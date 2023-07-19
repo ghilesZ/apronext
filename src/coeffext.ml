@@ -8,6 +8,8 @@ let one = s_of_int 1
 
 let minus_one = s_of_int (-1)
 
+let sign c = cmp c zero
+
 let of_interval i = Interval i
 
 let to_float = function
