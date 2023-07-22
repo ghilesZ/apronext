@@ -37,15 +37,39 @@ module Make (D : ADomain) = struct
 
   type box1 = A.box1 = {mutable interval_array: I.t array; mutable box1_env: E.t}
 
+  (** Type of merge policies for binary operations on abstract elements defined
+      on heterogeneous environment :
+
+      the behaviour of binary operations on heterogeneous environment is
+      specified using the optional ?env argument. Default behaviour (Fail) is to
+      assume that both elements are defined on the same set of variables;
+      otherwise, an Invalid_argument exception will be raised. When ?env is set
+      to Meet the result is defined on the intersection of both environment *)
+  type policy = Fail | Meet
+
   (** Set-theoritic operations *)
 
   let bottom : Environmentext.t -> t = A.bottom D.man
 
   let top : Environmentext.t -> t = A.top D.man
 
-  let join : t -> t -> t = A.join D.man
+  let join ?merge:(m = Fail) a1 a2 =
+    match m with
+    | Fail -> A.join D.man a1 a2
+    | Meet ->
+        let e = E.meet a1.env a2.env in
+        A.join D.man
+          (A.change_environment D.man a1 e false)
+          (A.change_environment D.man a2 e false)
 
-  let meet : t -> t -> t = A.meet D.man
+  let meet ?merge:(m = Fail) a1 a2 =
+    match m with
+    | Fail -> A.meet D.man a1 a2
+    | Meet ->
+        let e = E.meet a1.env a2.env in
+        A.meet D.man
+          (A.change_environment D.man a1 e false)
+          (A.change_environment D.man a2 e false)
 
   let widening : t -> t -> t = A.widening D.man
 
