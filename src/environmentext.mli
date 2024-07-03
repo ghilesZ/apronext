@@ -1,7 +1,7 @@
 (** This file is an extension for the Environment from the apron Library *)
 
-(** Note : It only adds function, nothing is removed. Extensions are at the
-    end of the module *)
+(** Note : It only adds function, nothing is removed. Extensions are at the end
+    of the module *)
 
 open Apron
 
@@ -31,8 +31,8 @@ external rename : t -> Var.t array -> Var.t array -> t
 
 external rename_perm : t -> Var.t array -> Var.t array -> t * Dim.perm
   = "camlidl_environment_ap_environment_rename_perm"
-(** Similar to previous function, but returns also the permutation on
-    dimensions induced by the renaming. *)
+(** Similar to previous function, but returns also the permutation on dimensions
+    induced by the renaming. *)
 
 external lce : t -> t -> t = "camlidl_environment_ap_environment_lce"
 (** Compute the least common environment of 2 environment, that is, the
@@ -48,26 +48,27 @@ external lce_change : t -> t -> t * Dim.change option * Dim.change option
 external dimchange : t -> t -> Dim.change
   = "camlidl_environment_ap_environment_dimchange"
 (** [dimchange e1 e2] computes the transformation for converting from an
-    environment [e1] to a superenvironment [e2]. Raises [Failure] if [e2] is
-    not a superenvironment.*)
+    environment [e1] to a superenvironment [e2]. Raises [Failure] if [e2] is not
+    a superenvironment.*)
 
 external dimchange2 : t -> t -> Dim.change2
   = "camlidl_environment_ap_environment_dimchange2"
 (** [dimchange2 e1 e2] computes the transformation for converting from an
-    environment [e1] to a (compatible) environment [e2], by first adding
-    (some) variables of [e2] and then removing (some) variables of [e1].
-    Raises [Failure] if the two environments are incompatible. *)
+    environment [e1] to a (compatible) environment [e2], by first adding (some)
+    variables of [e2] and then removing (some) variables of [e1]. Raises
+    [Failure] if the two environments are incompatible. *)
 
 external equal : t -> t -> bool = "camlidl_environment_ap_environment_equal"
 (** Test equality if two environments *)
 
-external compare : t -> t -> int
-  = "camlidl_environment_ap_environment_compare"
-(** Compare two environment. [compare env1 env2] return [-2] if the
-    environements are not compatible (a variable has different types in the 2
-    environements), [-1] if [env1] is a subset of env2, [0] if equality, [+1]
-    if env1 is a superset of env2, and [+2] otherwise (the lce exists and is
-    a strict superset of both) *)
+external cmp : t -> t -> int = "camlidl_environment_ap_environment_cmp"
+(** Compare two environment. [cmp env1 env2] return [-2] if the environments are
+    not compatible (a variable has different types in the 2 environments), [-1]
+    if [env1] is a subset of env2, [0] if equality, [+1] if env1 is a superset
+    of env2, and [+2] otherwise (the lce exists and is a strict superset of
+    both). This is not a total order, and cannot be used as comparison function
+    when a total order is needed (e.g., in [Set.Make]). The function has been
+    renamed from [compare] to avoid confusion. *)
 
 external hash : t -> int = "camlidl_environment_ap_environment_hash"
 (** Hashing function for environments *)
@@ -90,14 +91,14 @@ external typ_of_var : t -> Var.t -> typvar
 
 external vars : t -> Var.t array * Var.t array
   = "camlidl_environment_ap_environment_vars"
-(** Return the (lexicographically ordered) sets of integer and real variables
-    in the environment *)
+(** Return the (lexicographically ordered) sets of integer and real variables in
+    the environment *)
 
 external var_of_dim : t -> Dim.t -> Var.t
   = "camlidl_environment_ap_environment_var_of_dim"
-(** Return the variable corresponding to the given dimension in the
-    environment. Raise [Failure] is the dimension is out of the range of the
-    environment (greater than or equal to [dim env]) *)
+(** Return the variable corresponding to the given dimension in the environment.
+    Raise [Failure] is the dimension is out of the range of the environment
+    (greater than or equal to [dim env]) *)
 
 external dim_of_var : t -> Var.t -> Dim.t
   = "camlidl_environment_ap_environment_dim_of_var"
@@ -128,8 +129,8 @@ val empty : t
 exception DuplicateName of string
 
 val add_check : t -> Apron.Var.t array -> Apron.Var.t array -> t
-(** same as add but first check if the variables exist in the environement
-    and raises DuplicateName is it is the case.*)
+(** same as add but first check if the variables exist in the environement and
+    raises DuplicateName is it is the case.*)
 
 val add_one : Apron.Var.t * typvar -> t -> t
 (** adds one variable to an environment according to its type *)

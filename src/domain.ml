@@ -170,10 +170,8 @@ module Make (D : ADomain) = struct
   (* utilities*)
   let add_var (abs : t) typ v : t =
     let e = A.env abs in
-    let ints, reals =
-      if typ = Environment.INT then ([|v|], [||]) else ([||], [|v|])
-    in
-    let env = Environment.add e ints reals in
+    let ints, reals = if typ = E.INT then ([|v|], [||]) else ([||], [|v|]) in
+    let env = E.add e ints reals in
     A.change_environment D.man abs env false
 
   let add_var_s (abs : t) typ v : t = add_var abs typ (Var.of_string v)
@@ -219,13 +217,10 @@ module Make (D : ADomain) = struct
 
   (** Pretty printing *)
   let pp_print fmt (a : t) =
-    (* print fmt a *)
-    let constraints = to_lincons_list a in
-    Format.fprintf fmt "[|%a|]"
-      (Format.pp_print_list
-         ~pp_sep:(fun fmt () -> Format.fprintf fmt "; ")
-         Linconsext.pp_print )
-      constraints
+    to_lincons_list a
+    |> Format.(
+         fprintf fmt "[|%a|]"
+           (pp_print_list ~pp_sep:(fun fmt () -> fprintf fmt "; ") L.pp_print) )
 
   (** Projection on 2 dimensions *)
   let proj2D (abs : t) v1 v2 : t =
